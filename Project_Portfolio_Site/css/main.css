@@ -1,0 +1,78 @@
+body, html {
+  height: 100%;
+}
+
+header,
+h1,
+h2 {
+  margin: 3px;
+  padding-right: 0;
+  color: #2d3c49;
+  font-weight: 100;
+  font-size: 1.8em;
+}
+
+.logo {
+  display: inline;
+  max-width: 2em;
+  max-height: 2em;
+  align-self: left;
+}
+
+h2 {
+  font-weight: normal;
+  font-size: 1em;
+  border-bottom: 3px solid #7d97ad;
+}
+
+img {
+max-width: 100%;
+vertical-align: bottom;
+} 
+
+.Tesla {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+h3 {
+  color: #7d97ad;
+  font-size: 2em;
+}
+
+section {
+  display: block;
+  margin: 0.1em;
+  width: 33%;
+}
+
+p {
+  color: #2d3c49;
+  font-size: 2em;
+}
+
+div {
+  font-size: 0.6em;
+  text-align: center;
+}
+
+a {
+  color: #2d3c49;
+  word-wrap: break-word;
+
+}
+
+.container {
+  width: 100%;
+  display: flex;
+}
+
+@media screen and (max-width: 575px) {
+    .container {
+          flex-direction: column;
+     }
+
+    .FSWD, .ML, .Future {
+          width: 100%;
+     }
+}
