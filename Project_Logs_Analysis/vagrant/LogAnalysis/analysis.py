@@ -10,7 +10,6 @@ if __name__ == '__main__':
     request_error_query = "select formatteddate, errorrate from (select TO_CHAR(time, 'dd/Mon/yyyy') as formatteddate, 100.0 * count (*) filter (where status = '404 NOT FOUND') / count(*) as errorrate from log group by formatteddate) as ratecal where errorrate > 1;"  # noqa
     # Printing out the questions and analysis
     print('1. What are the most popular three articles of all time?')
-    poparticles(pop_articles_query)
     print('\n''2. Who are the most popular article authors of all time?')
     popauthors(pop_authors_query)
     print('\n''3. On which days did more than 1% of requests lead to errors? ')
