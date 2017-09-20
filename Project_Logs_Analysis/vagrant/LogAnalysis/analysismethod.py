@@ -29,8 +29,8 @@ class poparticles(get_query_results):
         # Initialize attributes of the parent class
         super().__init__(query)
         # Print the results of the child class
-#        for (title, count) in self.rows:
-#            print(" {} - {} views".format(title, count))
+        for (title, count) in self.rows:
+            print(" {} - {} views".format(title, count))
 
 class popauthors(get_query_results):
     # Return the all time most popular authors
@@ -39,11 +39,7 @@ class popauthors(get_query_results):
         super().__init__(query)
         # Print the results of the child class
         for (name, count) in self.rows:
-            print(" {} - {} views".format(title, count))
-
-
-#        for row in self.rows:
-#            print (str(row[0]), ' - ', str(row[1]), ' views')
+            print(" {} - {} views".format(name, count))
 
 class requesterror(get_query_results):
     # Return on which days did more than 1% of requests lead to errors
@@ -51,5 +47,7 @@ class requesterror(get_query_results):
         # Initialize attributes of the parent class
         super().__init__(query)
         # Print the results of the child class
-        for row in self.rows:
-            print (str(row[0]), ' - ', str(round(row[1], 1)), '% errors')
+        for (formattedate, errorrate) in self.rows:
+            print("{} - {:.2}% errors".format(formattedate, errorrate))
+#        for row in self.rows:
+#            print (str(row[0]), ' - ', str(round(row[1], 1)), '% errors')

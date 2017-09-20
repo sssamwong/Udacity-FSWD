@@ -1,5 +1,20 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Restaurant, MenuItem
+
+engine = create_engine('sqlite:///restaurantmenu.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind = engine)
+session = DBSession()
+
+class list_all_restaurant():
+    RestaurantNames = session.query(Restaurant).all()
+    return
+#    for RestaurantName in RestaurantNames:
+#        print RestaurantName.name
+
 
 class webserverHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -11,11 +26,15 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = ""
                 output += "<html><body>"
                 output += "Hello!"
-                output += "<form method = 'POST' enctype = 'multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name = 'message' type = 'text' ><input type = 'submit' value = 'Submit'> </form>"  # noqa
+                RestaurantNames = list_all_restaurant()
+                for RestaurantName in RestaurantNames:
+                    output += RestaurantName
+#                output += "<form method = 'POST' enctype = 'multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name = 'message' type = 'text' ><input type = 'submit' value = 'Submit'> </form>"  # noqa
                 output += "</body></html>"
                 self.wfile.write(output)
                 print (output)
                 return
+
 
             if self.path.endswith("/hola"):
                 self.send_response(200)
@@ -29,9 +48,9 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.wfile.write(output)
                 print (output)
                 return
-
         except IOError:
             self.send_error(404, "File Not Found %s" % self.path)
+
 
     def do_POST(self):
         try:
@@ -60,6 +79,7 @@ def main():
         port = 8080
         server = HTTPServer(('', port), webserverHandler)
         print ("Web server running on port %s" % port)
+        print (list_all_restaurant())
         server.serve_forever()
 
     except KeyboardInterrupt:
