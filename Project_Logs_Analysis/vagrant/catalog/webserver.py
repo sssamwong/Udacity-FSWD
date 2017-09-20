@@ -9,16 +9,30 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
 
-class list_all_restaurant():
+class list_all_restaurant(object):
     RestaurantNames = session.query(Restaurant).all()
-    return
-#    for RestaurantName in RestaurantNames:
-#        print RestaurantName.name
-
+    def return_names(self):
+        return self.RestaurantNames
 
 class webserverHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
+            if self.path.endswith("/restaurants"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                output = ""
+                output += "<html><body>"
+                lister = list_all_restaurant()
+                RestaurantNames = lister.return_names()
+                for RestaurantName in RestaurantNames:
+                    output += RestaurantName.name
+                    output += "</br>"
+                output += "</body></html>"
+                self.wfile.write(output)
+                print (output)
+                return
+
             if self.path.endswith("/hello"):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
@@ -26,15 +40,11 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = ""
                 output += "<html><body>"
                 output += "Hello!"
-                RestaurantNames = list_all_restaurant()
-                for RestaurantName in RestaurantNames:
-                    output += RestaurantName
-#                output += "<form method = 'POST' enctype = 'multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name = 'message' type = 'text' ><input type = 'submit' value = 'Submit'> </form>"  # noqa
+                output += "<form method = 'POST' enctype = 'multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name = 'message' type = 'text' ><input type = 'submit' value = 'Submit'> </form>"  # noqa
                 output += "</body></html>"
                 self.wfile.write(output)
                 print (output)
                 return
-
 
             if self.path.endswith("/hola"):
                 self.send_response(200)
