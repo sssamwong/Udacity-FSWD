@@ -8,11 +8,17 @@ engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
+restaurant_list = session.query(Restaurant).all()
 
-class list_all_restaurant(object):
-    RestaurantNames = session.query(Restaurant).all()
-    def return_names(self):
-        return self.RestaurantNames
+class rename_restaurant(object):
+    def __init__(self, newName, id_number):
+        self.newName = newName
+        self.id_number = id_number
+        targeted_restaurant = session.query(Restaurant).filter_by(id = self.id_number).one()  # noqa
+        print targeted_restaurant.name
+        targeted_restaurant.name = self.newName[0]
+        session.add(targeted_restaurant)
+        session.commit()
 
 class add_restaurant(object):
     def __init__(self, new_restaurant_name):
@@ -25,19 +31,19 @@ class webserverHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             if self.path.endswith("/restaurants"):
+                RestaurantNames = session.query(Restaurant).all()
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 output = ""
                 output += "<html><body>"
-                output += "<a href = '/restaurants/new'>Make a New Restaurant Here</a><br><br>"
-                lister = list_all_restaurant()
-                RestaurantNames = lister.return_names()
+                output += "<a href = '/restaurants/new'>Make a New Restaurant Here</a><br><br>"   # noqa
                 for RestaurantName in RestaurantNames:
                     output += RestaurantName.name
+                    id_number = RestaurantName.id
                     output += "<br>"
-                    output += "<a href = '#'>Edit</a><br>"
-                    output += "<a href = '#'>Delete</a><br>"
+                    output += "<a href = '/restaurants/%s/edit'>Edit</a><br>" % id_number  # noqa
+                    output += "<a href = '/restaurants/%s/edit'>Delete</a><br>" %id_number  # noqa
                     output += "<br><br>"
                 output += "</body></html>"
                 self.wfile.write(output)
@@ -58,6 +64,23 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.wfile.write(output)
                 print (output)
                 return
+
+            for RestaurantName in restaurant_list:
+                id_number = RestaurantName.id
+                if self.path.endswith("/restaurants/%s/edit" % id_number):
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    output = ""
+                    output += "<html><body>"
+                    output += "<h1> %s </h1>" % RestaurantName.name
+                    output += "<form method = 'POST' enctype = 'multipart/form-data' action='/restaurants/%s/edit'>" % id_number  # noqa
+                    output += "<input name = 'renameRestaurantName' type = 'text' placeholder = '%s'>" % RestaurantName.name  # noqa
+                    output += "<input type = 'submit' value='Rename'>"
+                    output += "</body></html>"
+                    self.wfile.write(output)
+                    print (output)
+                    return
 
             if self.path.endswith("/hello"):
                 self.send_response(200)
@@ -95,7 +118,7 @@ class webserverHandler(BaseHTTPRequestHandler):
                 if ctype == 'multipart/form-data':
                     fields = cgi.parse_multipart(self.rfile, pdict)
                 messagecontent = fields.get('newRestaurantName')
-
+                print messagecontent
                 # Adding the new restaurant name
                 add_restaurant(messagecontent)
 
@@ -104,6 +127,23 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.send_header('Location', '/restaurants')
                 self.end_headers()
                 return
+
+            for RestaurantName in restaurant_list:
+                id_number = RestaurantName.id
+                if self.path.endswith("/restaurants/%s/edit" % id_number):
+                    ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))  # noqa
+                    if ctype == 'multipart/form-data':
+                        fields = cgi.parse_multipart(self.rfile, pdict)
+                    newName = fields.get('renameRestaurantName')
+
+                    # Adding the new restaurant name
+                    rename_restaurant(newName, id_number)
+
+                    self.send_response(301)
+                    self.send_header('Content-type', 'text/html')
+                    self.send_header('Location', '/restaurants')
+                    self.end_headers()
+                    return
 
 #            self.send_response(301)
 #            self.end_headers()
