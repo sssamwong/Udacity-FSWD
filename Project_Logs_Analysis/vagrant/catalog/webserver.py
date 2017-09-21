@@ -27,7 +27,9 @@ class webserverHandler(BaseHTTPRequestHandler):
                 RestaurantNames = lister.return_names()
                 for RestaurantName in RestaurantNames:
                     output += RestaurantName.name
-                    output += "</br>"
+                    output += "<br>"
+                    output += "<a href = '#'>Edit</a><br>"
+                    output += "<a href = '#'>Delete</a><br>"
                 output += "</body></html>"
                 self.wfile.write(output)
                 print (output)
