@@ -22,7 +22,25 @@ function loadData() {
     // load streetview
     $body.append('<img class="bgimg" src="' + streetviewUrl + '">');
 
-    // YOUR CODE GOES HERE!
+    //NYTimes AJAX request here
+
+    var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+        url += '?' + $.param({
+        'api-key': "cff6129e07b84f0c928893806dfd6081",
+        'q': cityStr,
+        'sort': "newest",
+        'page': 0
+    });
+
+
+    $.getJSON(url, function (data) {
+        $nytHeaderElem.text('New York Times Articles About ' + cityStr);
+        articles = data.response.docs;
+        $.each(articles, function(i, article) {
+            $nytElem.append('<li class="article">' + '<a href="' + article.web_url + '">' + article.headline.main + '</a>' + '<p>' + article.snippet + '</p>' + '</li>');
+        });
+    });
+
 
     return false;
 };
