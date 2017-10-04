@@ -24,8 +24,8 @@ function loadData() {
 
     //NYTimes AJAX request here
 
-    var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-        url += '?' + $.param({
+    var nyturl = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+        nyturl += '?' + $.param({
         'api-key': "cff6129e07b84f0c928893806dfd6081",
         'q': cityStr,
         'sort': "newest",
@@ -33,7 +33,7 @@ function loadData() {
     });
 
 
-    $.getJSON(url, function(data) {
+    $.getJSON(nyturl, function(data) {
         $nytHeaderElem.text('New York Times Articles About ' + cityStr);
         articles = data.response.docs;
         $.each(articles, function(i, article) {
@@ -43,6 +43,19 @@ function loadData() {
             $nytHeaderElem.text('New York Times Articles Could Not Be Loaded');
     });
 
+    var wikiurl = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + cityStr + "&format=json&callback=wikiCallback";
+
+    $.ajax({
+        dataType: 'jsonp',
+        url: wikiurl,
+        success: function(data){
+            console.log('success', data);
+            wikiLinks = data[1];
+            $.each(wikiLinks, function(i, wikiLink){
+                $wikiElem.append('<li><a href="https://en.wikipedia.org/wiki/' + wikiLink + '">' + wikiLink + '</a></li>');
+            });
+        }
+    });
 
     return false;
 };
