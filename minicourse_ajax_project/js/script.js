@@ -33,6 +33,9 @@ function loadData() {
     });
 
 
+
+
+
     $.getJSON(nyturl, function(data) {
         $nytHeaderElem.text('New York Times Articles About ' + cityStr);
         articles = data.response.docs;
