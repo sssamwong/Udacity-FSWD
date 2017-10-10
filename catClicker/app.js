@@ -24,7 +24,9 @@ $(function(){
             {   clickCount : 0,
                 name : "Melon",
                 imgSrc : "https://i.pinimg.com/736x/1b/bd/5f/1bbd5fb17d8e86706993f56ef5e4cd05--cute-photos-cute-cats.jpg"
-            }]
+            }],
+
+        adminExpand: false
 
     };
 
@@ -39,6 +41,10 @@ $(function(){
 //            console.log("in setCurrentCat now " + model.currentCat);
         },
 
+        returnCurrentCatArray: function(){
+            return model.catPictures[model.currentCat];
+        },
+
         returnClickCount: function(){
 //            console.log("in returnClickCount now " + model.currentCat);
             return model.catPictures[model.currentCat].clickCount;
@@ -50,6 +56,18 @@ $(function(){
 //            console.log("in incrementClickCount now " + model.catPictures[model.currentCat].clickCount + " click(s)");
         },
 
+        returnAdminBoo: function(){
+            return model.adminExpand;
+        },
+
+        setAdminBoo: function(adminBoo){
+            model.adminExpand = adminBoo;
+        },
+
+        setCatName: function(catNameInput){
+            model.catPictures[model.currentCat].name = catNameInput;
+        },
+
         init: function(){
             view.init();
         }
@@ -59,12 +77,27 @@ $(function(){
         init: function(){
 //            console.log("in view init");
             var catList = $("ul#catList");
+            var adminOption = octopus.returnAdminBoo();
             view.showCatList();
             $("li").click(function(){
                 $("p").text("");
                 var selectedCat = $(this).text();
 //                console.log(selectedCat);
                 view.showCatPicture(selectedCat);
+            });
+            $("button.admin").click(function(){
+                console.log("in admin click");
+                if (!adminOption) {
+                    console.log(adminOption);
+                    view.showAdminArea();
+                    adminOption = true;
+                    octopus.setAdminBoo(adminOption);
+                };
+            });
+            $("form").on("click", "button.save", function(e){
+                console.log("in button save");
+                view.saveAdminInput();
+                e.preventDefault();
             });
         },
         showCatList: function(){
@@ -94,6 +127,22 @@ $(function(){
             var showClickCount = octopus.returnClickCount();
 //            console.log("in clickCounter now " + showClickCount + " click(s)");
             $("p").text(showClickCount + " click(s)");
+        },
+        showAdminArea: function(){
+            var currentCatArray = octopus.returnCurrentCatArray();
+            $("#admin-form").append("Name: <input type='text' name='catNameInAdmin' value='" + currentCatArray.name + "'><br>");
+            $("#admin-form").append("ImgURL: <input type='text' name='catImgURLInAdmin' value='" + currentCatArray.imgSrc + "'><br>");
+            $("#admin-form").append("#clicks: <input type='text' name='catNoOfClicksInAdmin' value='" + currentCatArray.clickCount + "'><br>");
+            $("#admin-form").append("<button class='cancel' id='cancel'>Cancel</button>");
+            $("#admin-form").append("<button class='save' id='save'>Save</button><br>");
+        },
+        saveAdminInput: function(){
+            console.log("in saveAdminInput");
+            var catNameInput = $("input[name=catNameInAdmin]").val();
+            console.log(catNameInput);
+            octopus.setCatName(catNameInput);
+//            $("h2#catName").empty();
+//            view.showCatList();
         }
     };
 
