@@ -97,6 +97,12 @@ $(function(){
             $("form").on("click", "button.save", function(e){
                 console.log("in button save");
                 view.saveAdminInput();
+                view.hideAdmin();
+                e.preventDefault();
+            });
+            $("form").on("click", "button.cancel", function(e){
+                console.log("in button save");
+                view.hideAdmin();
                 e.preventDefault();
             });
         },
@@ -112,7 +118,7 @@ $(function(){
             for (i=0;i<5;i++){
                 if (selectedCat===cats[i].name) {
                     $("h2").text(cats[i].name);
-                    $("img").replaceWith("<img src='" + cats[i].imgSrc + "'>'");
+                    $("img").replaceWith("<img src='" + cats[i].imgSrc + "'>");
                     octopus.setCurrentCat(i);
                 };
             };
@@ -141,8 +147,15 @@ $(function(){
             var catNameInput = $("input[name=catNameInAdmin]").val();
             console.log(catNameInput);
             octopus.setCatName(catNameInput);
-//            $("h2#catName").empty();
-//            view.showCatList();
+            $("li").remove();
+            view.init();
+        },
+        hideAdmin: function(){
+            if (adminOption) {
+                $("#admin-form").hide();
+                adminOption = false;
+                octopus.setAdminBoo(adminOption);
+            }
         }
     };
 
