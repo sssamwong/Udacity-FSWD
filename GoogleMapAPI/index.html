@@ -6,10 +6,41 @@ API Course, Lesson 1 -->
  <!-- styles put here, but you can include a CSS file and reference it instead! -->
    <style type="text/css">
      html, body { height: 100%; margin: 0; padding: 0; }
+
      #map { height: 100%; }
+
+     #pano {
+       width: 200px;
+       height: 200px;
+     }
+
+     #toggle-drawing{
+      width:: 27%;
+      position: relative;
+      margin-left: 10px;
+     }
+
    </style>
  </head>
  <body>
+   <div class="container">
+     <div class="options-box">
+       <h1>Find your New NYC Home</h1>
+       <div>
+         <input id="show-listings" type="button" value="Show Listings">
+         <input id="hide-listings" type="button" value="Hide Listings">
+         <hr>
+         <span class="text">Draw a Shape to search within it for homes!</span>
+         <input id="toggle-drawing" type="button" value="Drawing Tools">
+         <p id="show-calculatedArea"></p>
+       </div>
+       <hr>
+       <div>
+         <input id="zoom-to-area-text" type="text" placeholder="Enter Your Favorite Area!">
+         <input id="zoom-to-area" type="button" value="Zoom">
+       </div>
+     </div>
+   </div>
    <!-- TODO 1: Create a place to put the map in the HTML-->
    <div id="map"></div>
    <script>
@@ -18,6 +49,9 @@ API Course, Lesson 1 -->
 
      //Create a new blank array for all listing markers
      var markers = [];
+
+     // This global polygon variable is to ensure only ONE polygon is rendered.
+     var polygon = null;
 
      // TODO: Complete the following function to initialize the map
      function initMap() {
@@ -40,6 +74,19 @@ API Course, Lesson 1 -->
         ];
 
         var largeInfowindow = new google.maps.InfoWindow();
+
+        //Initialize the drawing manager.
+        var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.POLYGON,
+          drawingControl: true,
+          drawingControlOptions:{
+            position: google.maps.ControlPosition.TOP_LEFT,
+            drawingModes:[
+              google.maps.drawing.OverlayType.POLYGON
+            ]
+          }
+        });
+
         var bounds = new google.maps.LatLngBounds();
 
         for (var i = 0; i < locations.length; i++){
@@ -48,7 +95,6 @@ API Course, Lesson 1 -->
           var title = locations[i].title;
           //Create a marker per location, and put into markers array.
           var marker = new google.maps.Marker({
-            map: map,
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
@@ -62,27 +108,118 @@ API Course, Lesson 1 -->
           marker.addListener("click", function(){
             populateInfoWindow(this, largeInfowindow);
           });
-          map.fitBounds(bounds);
         };
+
+        document.getElementById('show-listings').addEventListener('click', showListings);
+        document.getElementById('hide-listings').addEventListener('click', hideListings)
+        document.getElementById('toggle-drawing').addEventListener('click', function(){toggleDrawing(drawingManager);});
+
+        //Add an event listener so that the polygon is captured, call the searchWithPolygon function. This will show the markers in the polygon, and hide any outside of it.
+        drawingManager.addListener('overlaycomplete', function(event) {
+          // First, checl if there is an existing polygon.
+          // If there is, get rid of it and remove the markers
+          if (polygon){
+            polygon.setMap(null);
+            hideListings()
+          };
+
+          // Switching the drawing mode to the HAND (i.e., no longer drawing)
+          drawingManager.setDrawingMode(null);
+          // Creating a new editable polygon from the overlay
+          polygon = event.overlay;
+          polygon.setEditable(true);
+          // Searching within the polygon.
+          searchWithinPolygon();
+          // Make sure the search is re-done if the poly is changed.
+          polygon.getPath().addListener('set_at', searchWithinPolygon);
+          polygon.getPath().addListener('insert_at', searchWithinPolygon);
+
+          var Area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+
+        });
 
         //To populates the infowindow when the marker is clicked. Only 1
         //infowindow is allowed each time
         function populateInfoWindow(marker, infowindow){
           // Make sure the infowindow is not already opened on this marker
           if (infowindow.marker != marker){
+            infowindow.setContent("");
             infowindow.marker = marker;
-            infowindow.setContent("<div>" + marker.title + "</div>");
-            infowindow.open(map, marker);
             // Make sure the marker property is cleared if the infowindow is closed.
             infowindow.addListener("closeclick", function(){
-              infowindow.setMarker(null);
-            })
+              infowindow.marker = null;
+            });
+            var streetViewService = new google.maps.StreetViewService();
+            var radius = 50;
+            //In case the status is OK, which means the pano was found, compute the position of the streetview image, then calculate the heading, then get a panorama from that and set the options
+            function getStreetView(data, status){
+              if (status == google.maps.StreetViewStatus.OK){
+                var nearStreetViewLocation = data.location.latLng;
+                var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                var panoramaOptions = {
+                  position: nearStreetViewLocation,
+                  pov: {
+                    heading: heading,
+                    pitch: 30
+                  }
+                };
+                var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+                console.log(document.getElementById('pano'));
+              } else {
+                infowindow.setContent("<div>" + marker.title + "</div><div>No Street View Found</div>");
+              };
+            }
+            streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+            infowindow.open(map, marker);
+          }
+        }
+
+        // This function will loop through the markers array and display them all
+        function showListings(){
+          var bounds = new google.maps.LatLngBounds();
+          //Extend the boundaries of the map for each marker and display the marker
+          for (var i=0; i<markers.length;i++){
+            markers[i].setMap(map);
+            bounds.extend(markers[i].position);
+          }
+          map.fitBounds(bounds);
+        }
+
+        // This function will loop through the listings and hide them all
+        function hideListings() {
+          for (var i=0; i<markers.length; i++){
+            markers[i].setMap(null);
+          }
+        }
+
+        // This shows and hides (respectively) the drawing options
+        function toggleDrawing(drawingManager){
+          if (drawingManager.map){
+            drawingManager.setMap(null);
+            // In case the user drew anything, get rid of the polygon
+            if (polygon){
+              polygon.setMap(null);
+            }
+          } else {
+            drawingManager.setMap(map);
+          }
+        }
+
+        // This function hides all markers outside the polygon, and shows only the onces within it. This is so that the user can specify an exact area of search.
+        function searchWithinPolygon(){
+          for (var i = 0; i<markers.length; i++){
+            if (google.maps.geometry.poly.containsLocation(markers[i].position, polygon)){
+              markers[i].setMap(map);
+            } else {
+              markers[i].setMap(null);
+            }
           }
         }
      };
    </script>
    <!--TODO: Load the JS API ASYNCHRONOUSLY below.-->
-   <script  async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBai5QorFWTP2NwBtXG6I3uxVuXIB_5Uck&v=3&callback=initMap">
+   <script  async defer src="https://maps.googleapis.com/maps/api/js?libraries=drawing,geometry&key=AIzaSyBai5QorFWTP2NwBtXG6I3uxVuXIB_5Uck&v=3&callback=initMap">
    </script>
  </body>
 </html>
