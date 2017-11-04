@@ -6,3 +6,5 @@ function initMap() {
 		zoom: 10
 	});
 }
+
+// testing sidebar commit
