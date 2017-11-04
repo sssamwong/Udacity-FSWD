@@ -7,4 +7,21 @@ html, body {
 
 #map {
 	height: 100%;
+	bottom:0px;
+	top: 0px;
+	left: 250px;
+	position: relative;
+	right: 0px;;
+}
+
+.searchBar {
+	position: relative;
+	left: 250px;
+	background: #262626;
+}
+
+.sidebar {
+	position: fixed;
+	left: 0;
+	width: 250px;
 }
