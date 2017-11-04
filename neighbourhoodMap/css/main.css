@@ -7,9 +7,15 @@ html, body {
 	overflow: hidden;
 }
 
+.navBar {
+	position: relative;
+	background: #262626;
+	color: #fff;
+}
+
 .sidebar {
 	position: fixed;
-	top: 0;
+	top: 50;
 	left: -250px;
 	background: #262626;
 	width: 250px;
@@ -39,7 +45,7 @@ ul li a {
 }
 
 .sidebarBtn{
-	position: absolute;;
+	position: relative;
 	top: 0;
 	right: -30px;
 	width: 30px;
@@ -101,7 +107,11 @@ ul li a {
 #map {
 	height: 100%;
 	bottom:0px;
-	left: 300px;
+	left: 0px;
 	position: relative;
 	right: 0px;;
+}
+
+#map.comeOut {
+	left: 250px;
 }
