@@ -30,6 +30,8 @@ function initMap() {
 	});
 
 	var defaultIcon = makeMarkerIcon('0091ff');
+	var largeInfoWindow = new google.maps.InfoWindow();
+	var bounds = new google.maps.LatLngBounds();
 
 	//Looping through the array of POI to intialize the markers
 	for (var i = 0; i < initialPOI.length; i++) {
@@ -41,10 +43,18 @@ function initMap() {
 			position: position,
 			title: title,
 			animation: google.maps.Animation.DROP,
-			icon: defaultIcon,
+			//icon: defaultIcon,
 			id: i
 		})
+		//Push the marker to the markers array
 		markers.push(marker);
+		// Extend the boundaries of the map for each marker
+		bounds.extend(marker.position);
+		// Create click event for each infowindow
+		marker.addListener('click', function(){
+			populateInfoWindow(this, largeInfoWindow);
+		})
+		map.fitBounds(bounds);
 	}
 
 	function makeMarkerIcon(markerColor) {
@@ -57,6 +67,21 @@ function initMap() {
 			new google.maps.Size(21,34));
 		return markerImage;
 	}
+
+	// This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position..
+	function populateInfoWindow(marker, infowindow) {
+		if (infowindow.marker != marker) {
+			infowindow.marker = marker;
+			infowindow.setContent('<div>' + marker.title + '</div>');
+			infowindow.open(map, marker);
+			// Clear the marker property when the infowindow is closed
+			infowindow.addListener('closeclick', function(){
+				infowindow.setMarker(null);
+			});
+		}
+	}
+
+
 }
 
 
