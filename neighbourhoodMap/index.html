@@ -18,7 +18,7 @@
 			<input class="search" type="text" placeholder="Location">
 			<button class="filterBtn">Filter</button>
 			<ul id="poi-list" data-bind="foreach: poiList">
-				<li id="poi" data-bind="text: title"></li>
+				<li id="poi" data-bind="text: title, click: $parent.showInfoWindow"></li>
 			</ul>
 		</div>
 

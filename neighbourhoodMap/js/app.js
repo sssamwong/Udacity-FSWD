@@ -30,8 +30,8 @@ function initMap() {
 	});
 
 	var defaultIcon = makeMarkerIcon('0091ff');
-	var largeInfoWindow = new google.maps.InfoWindow();
 	var bounds = new google.maps.LatLngBounds();
+	var largeInfoWindow = new google.maps.InfoWindow();
 
 	//Looping through the array of POI to intialize the markers
 	for (var i = 0; i < initialPOI.length; i++) {
@@ -43,7 +43,6 @@ function initMap() {
 			position: position,
 			title: title,
 			animation: google.maps.Animation.DROP,
-			//icon: defaultIcon,
 			id: i
 		})
 		//Push the marker to the markers array
@@ -68,29 +67,50 @@ function initMap() {
 		return markerImage;
 	}
 
-	// This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position..
-	function populateInfoWindow(marker, infowindow) {
-		if (infowindow.marker != marker) {
-			infowindow.marker = marker;
-			infowindow.setContent('<div>' + marker.title + '</div>');
-			infowindow.open(map, marker);
-			// Clear the marker property when the infowindow is closed
-			infowindow.addListener('closeclick', function(){
-				infowindow.setMarker(null);
-			});
-		}
+}
+
+// This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position..
+function populateInfoWindow(marker, infowindow) {
+	if (infowindow.marker != marker) {
+		infowindow.marker = marker;
+		infowindow.setContent('<div>' + marker.title + '</div>');
+		infowindow.open(map, marker);
+		// Clear the marker property when the infowindow is closed
+		infowindow.addListener('closeclick', function(){
+			infowindow.setMarker(null);
+		});
+	}
+}
+
+var model = function() {
+	this.showClickedInfoWindow = function (marker){
+		var position = marker.location;
+		var title = marker.title;
+		var infoWindow = new google.maps.InfoWindow();
+		var clickedMarker = new google.maps.Marker({
+			map: map,
+			position: position,
+			title: title,
+		});
+		populateInfoWindow(clickedMarker, infoWindow);
 	}
 }
 
 var viewModel = function() {
 	var self = this;
 
-	this.poiList = ko.observableArray([]);
+	self.poiList = ko.observableArray([]);
 
 	initialPOI.forEach(function(poiItem){
 		self.poiList.push(poiItem);
-	})
+	});
+
+	self.showInfoWindow = function(poi){
+		console.log(this);
+		new model().showClickedInfoWindow(this);
+//		model().showClickedInfoWindow(this);
+	};
 
 }
 
-ko.applyBindings(viewModel);
+ko.applyBindings(new viewModel())
