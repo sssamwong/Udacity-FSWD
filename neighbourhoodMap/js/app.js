@@ -6,10 +6,12 @@ $(document).ready(function(){
 	})
 })
 
+// Default point of interests
+
 var initialPOI = [
 	{localLanguage: '雲南小鍋米線', title: 'Wannam Siu Wok Noodle', location: {lat: 22.370813, lng: 114.1357875}},
 	{localLanguage: '', title: 'Espuma', location: {lat: 22.299594, lng: 114.1723658}},
-	{localLanguage: '大勝軒 丸一', title: 'Taishoken Maruichi', location: {lat: 22.2865469, lng: 114.2164531,
+	{localLanguage: '大勝軒 丸一', title: 'Taishoken Maruichi', location: {lat: 22.2865469, lng: 114.2164531}},
 	{localLanguage: '炑八韓烤', title: 'Meokbang Korean BBQ & Bar', location: {lat: 22.2799897, lng: 114.1820578}},
 	{localLanguage: '北京樓', title: 'Peking Garden Restaurant', location: {lat: 22.3577271, lng: 114.1264391}},
 	{localLanguage: '七輪燒肉', title: 'Yakiniku Shichirin', location: {lat: 22.2814449, lng: 114.1253643}},
@@ -17,12 +19,44 @@ var initialPOI = [
 ]
 
 var map;
+// Create a new blank array for all listing markers
+var markers = [];
+
 function initMap() {
 	// Constructor creates a new map
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 22.2817824, lng: 114.1567264},
-		zoom: 12
+		zoom: 11
 	});
+
+	var defaultIcon = makeMarkerIcon('0091ff');
+
+	//Looping through the array of POI to intialize the markers
+	for (var i = 0; i < initialPOI.length; i++) {
+		var position = initialPOI[i].location;
+		var title = initialPOI[i].title;
+
+		var marker = new google.maps.Marker({
+			map: map,
+			position: position,
+			title: title,
+			animation: google.maps.Animation.DROP,
+			icon: defaultIcon,
+			id: i
+		})
+		markers.push(marker);
+	}
+
+	function makeMarkerIcon(markerColor) {
+		var markerImage = new google.maps.MarkerImage(
+			'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor + 
+			'|40|_|%E2%80%A2',
+			new google.maps.Size(21, 34),
+			new google.maps.Point(0, 0),
+			new google.maps.Point(10, 34),
+			new google.maps.Size(21,34));
+		return markerImage;
+	}
 }
 
 
