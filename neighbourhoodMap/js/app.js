@@ -80,8 +80,17 @@ function initMap() {
 			});
 		}
 	}
+}
 
+var viewModel = function() {
+	var self = this;
+
+	this.poiList = ko.observableArray([]);
+
+	initialPOI.forEach(function(poiItem){
+		self.poiList.push(poiItem);
+	})
 
 }
 
-
+ko.applyBindings(viewModel);

@@ -17,8 +17,8 @@
 		<div class="sidebar">
 			<input class="search" type="text" placeholder="Location">
 			<button class="filterBtn">Filter</button>
-			<ul>
-				<li><a class="poi">Testing 1</a></li>
+			<ul id="poi-list" data-bind="foreach: poiList">
+				<li id="poi" data-bind="text: title"></li>
 			</ul>
 		</div>
 
