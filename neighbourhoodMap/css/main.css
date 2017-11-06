@@ -17,9 +17,9 @@ html, body {
 .sidebar {
 	position: fixed;
 	top: 50;
-	left: -230px;
+	left: -235px;
 	background: #262626;
-	width: 230px;
+	width: 240px;
 	height: 100%;
 	transition: .3s;
 }
@@ -137,5 +137,5 @@ ul li{
 }
 
 #map.comeOut {
-	left: 230px;
+	left: 235px;
 }
