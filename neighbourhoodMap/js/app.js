@@ -15,7 +15,8 @@ var initialPOI = [
 	{localLanguage: '炑八韓烤', title: 'Meokbang Korean BBQ & Bar', location: {lat: 22.2799897, lng: 114.1820578}, ref: 3},
 	{localLanguage: '北京樓', title: 'Peking Garden Restaurant', location: {lat: 22.3577271, lng: 114.1264391}, ref: 4},
 	{localLanguage: '七輪燒肉', title: 'Yakiniku Shichirin', location: {lat: 22.2814449, lng: 114.1253643}, ref: 5},
-	{localLanguage: '', title: 'Beeger2', location: {lat: 22.2838502, lng: 114.1254129}, ref: 6}
+	{localLanguage: '', title: 'Beeger2', location: {lat: 22.2838502, lng: 114.1254129}, ref: 6},
+	{localLanguage: '', title: 'Solera Spanish Cuisine Concepts', location: {lat: 22.2967212, lng: 114.014821}, ref: 7}
 ]
 
 var map;
@@ -29,7 +30,7 @@ function initMap() {
 		zoom: 11
 	});
 
-	var defaultIcon = makeMarkerIcon('0091ff');
+//	var defaultIcon = makeMarkerIcon('0091ff');
 	var bounds = new google.maps.LatLngBounds();
 	var largeInfoWindow = new google.maps.InfoWindow();
 
@@ -52,33 +53,20 @@ function initMap() {
 		bounds.extend(marker.position);
 		// Create click event for each infowindow
 		marker.addListener('click', function(){
-			populateInfoWindow(this, largeInfoWindow);
-			toggleBounce(this);
+			markerClickedHander(this, largeInfoWindow);
 		});
 
 		map.fitBounds(bounds);
 	}
-
-	function makeMarkerIcon(markerColor) {
-		var markerImage = new google.maps.MarkerImage(
-			'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor + 
-			'|40|_|%E2%80%A2',
-			new google.maps.Size(21, 34),
-			new google.maps.Point(0, 0),
-			new google.maps.Point(10, 34),
-			new google.maps.Size(21,34));
-		return markerImage;
-	}
-
 }
 
 // This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position.
 function populateInfoWindow(marker, infowindow) {
 	if (infowindow.marker != marker) {
+		infowindow.setContent('');
 		infowindow.marker = marker;
 		infowindow.setContent('<div>' + marker.title + '</div>');
 		infowindow.open(map, marker);
-//		infowindow.marker.setAnimation(google.maps.Animation.BOUNCE);
 		// Clear the marker property when the infowindow is closed
 		infowindow.addListener('closeclick', function(){
 			infowindow.setMarker(null);
@@ -86,31 +74,27 @@ function populateInfoWindow(marker, infowindow) {
 	}
 }
 
-// This function set the marker to bounce when it's clicked
+// This function sets the marker to bounce when it's clicked
 function toggleBounce(marker) {
-	console.log(marker.getAnimation());
 	if (marker.getAnimation() !== null) {
-		console.log(marker.getAnimation());
 		marker.setAnimation(null);
 	} else {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
-		console.log('fucking bouncing!!!');
 	}
 };
 
+// This function handle the click the marker click event
+function markerClickedHander(marker, infoWindow){
+	populateInfoWindow(marker, infoWindow);
+	toggleBounce(marker);
+	map.setZoom(12);
+	map.setCenter(marker.getPosition());
+}
+
 var model = function() {
 	this.showClickedInfoWindow = function (marker){
-/*		var position = marker.location;
-		var title = marker.title;*/
 		var infoWindow = new google.maps.InfoWindow();
-/*		var clickedMarker = new google.maps.Marker({
-			map: map,
-			position: position,
-			title: title,
-			animation: google.maps.Animation.BOUNCE
-		});*/
-		populateInfoWindow(marker, infoWindow);
-		toggleBounce(marker);
+		markerClickedHander(marker, infoWindow)
 	}
 }
 
@@ -123,15 +107,8 @@ var viewModel = function() {
 		self.poiList.push(poiItem);
 	});
 
-/*	self.currentPOI = ko.observableArray([]);
-
-	self.updateCurrentPOI = function(poi){
-		self.currentPOI() = poi;
-	}*/
-
 	self.showInfoWindow = function(poi){
 		clickedMarkerRef = poi.ref;
-		console.log(clickedMarkerRef);
 		new model().showClickedInfoWindow(markers[clickedMarkerRef]);
 	};
 
