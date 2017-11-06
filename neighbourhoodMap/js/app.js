@@ -53,7 +53,7 @@ function initMap() {
 		bounds.extend(marker.position);
 		// Create click event for each infowindow
 		marker.addListener('click', function(){
-			markerClickedHander(this, largeInfoWindow);
+			markerClickedHandler(this, largeInfoWindow);
 		});
 
 		map.fitBounds(bounds);
@@ -80,11 +80,14 @@ function toggleBounce(marker) {
 		marker.setAnimation(null);
 	} else {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
+		setTimeout(function(){
+			marker.setAnimation(null);
+		}, 3000);
 	}
 };
 
 // This function handle the click the marker click event
-function markerClickedHander(marker, infoWindow){
+function markerClickedHandler(marker, infoWindow){
 	populateInfoWindow(marker, infoWindow);
 	toggleBounce(marker);
 	map.setZoom(12);
@@ -94,7 +97,7 @@ function markerClickedHander(marker, infoWindow){
 var model = function() {
 	this.showClickedInfoWindow = function (marker){
 		var infoWindow = new google.maps.InfoWindow();
-		markerClickedHander(marker, infoWindow)
+		markerClickedHandler(marker, infoWindow)
 	}
 }
 
