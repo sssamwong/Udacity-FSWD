@@ -16,7 +16,6 @@
 
 		<div class="sidebar">
 			<input class="search" type="text" placeholder="Location" data-bind="textInput: userSearchKey, valueUpdate: 'afterkeydown'">
-			<button class="filterBtn" type="submit">Filter</button>
 			<ul id="poi-list" data-bind="foreach: filterPOI">
 					<li id="poi" data-bind="text: title, click: $parent.showInfoWindow"></li>
 			</ul>
