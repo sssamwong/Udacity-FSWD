@@ -38,7 +38,7 @@ function initMap() {
 	for (var i = 0; i < initialPOI.length; i++) {
 		var position = initialPOI[i].location;
 		var title = initialPOI[i].title;
-		var id = initialPOI[i].ref
+		var id = initialPOI[i].ref;
 
 		var marker = new google.maps.Marker({
 			map: map,
@@ -94,10 +94,43 @@ function markerClickedHandler(marker, infoWindow){
 	map.setCenter(marker.getPosition());
 }
 
+function hideMarkers(marker) {
+	for (var i = 0; i < marker.length; i++) {
+		marker[i].setMap(null);
+	};
+}
+
+function showMarkers(rawMarker) {
+	var bounds = new google.maps.LatLngBounds();
+	console.log("hello");
+	for (var i = 0; i < rawMarker.length; i++) {
+		var position = rawMarker[i].location;
+		var title = rawMarker[i].title;
+		var id = rawMarker[i].ref;
+
+		var marker = new google.maps.Marker({
+			map: map,
+			position: position,
+			title: title,
+			id: id
+		})
+		marker.setMap(map);
+		bounds.extend(marker.position);
+	}
+}
+
 var model = function() {
 	this.showClickedInfoWindow = function (marker){
 		var infoWindow = new google.maps.InfoWindow();
 		markerClickedHandler(marker, infoWindow)
+	}
+
+	this.hideMarkers = function(marker) {
+		hideMarkers(marker);
+	}
+
+	this.showMarkers = function(rawMarker){
+		showMarkers(rawMarker);
 	}
 }
 
@@ -123,6 +156,11 @@ var viewModel = function() {
 		});
 	});
 
+	self.updateMarkers = function(){
+		new model().hideMarkers(markers);
+		console.log(self.filterPOI());
+		new model().showMarkers(self.filterPOI());
+	}
 }
 
-ko.applyBindings(new viewModel())
+ko.applyBindings(new viewModel());
