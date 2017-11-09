@@ -94,19 +94,21 @@ function markerClickedHandler(marker, infoWindow){
 	map.setCenter(marker.getPosition());
 }
 
-function hideMarkers(marker) {
-	for (var i = 0; i < marker.length; i++) {
-		marker[i].setMap(null);
+function hideMarkers() {
+	console.log("in hideMarkers")
+	for (var i = 0; i < markers.length; i++) {
+		markers[i].setMap(null);
+		console.log("in hide hide");
 	};
 }
 
 function showMarkers(rawMarker) {
 	var bounds = new google.maps.LatLngBounds();
-	console.log("hello");
 	for (var i = 0; i < rawMarker.length; i++) {
 		var position = rawMarker[i].location;
 		var title = rawMarker[i].title;
 		var id = rawMarker[i].ref;
+		console.log("WTF!?");
 
 		var marker = new google.maps.Marker({
 			map: map,
@@ -114,7 +116,8 @@ function showMarkers(rawMarker) {
 			title: title,
 			id: id
 		})
-		marker.setMap(map);
+		markers.push(marker);
+//		marker.setMap(map);
 		bounds.extend(marker.position);
 	}
 }
@@ -157,7 +160,8 @@ var viewModel = function() {
 	});
 
 	self.updateMarkers = function(){
-		new model().hideMarkers(markers);
+		console.log("dklm");
+		new model().hideMarkers();
 		console.log(self.filterPOI());
 		new model().showMarkers(self.filterPOI());
 	}
