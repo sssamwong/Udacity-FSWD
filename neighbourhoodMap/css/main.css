@@ -123,3 +123,8 @@ ul li{
 #map.comeOut {
 	left: 235px;
 }
+
+#pano {
+	width: 200px;
+	height: 200px;
+}
