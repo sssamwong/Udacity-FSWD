@@ -3,24 +3,20 @@ $(function(){
 		$('.sidebar').toggleClass('active');
 		$('.sidebarBtn').toggleClass('toggle');
 		$('#map').toggleClass('comeOut');
-	})
-
-/*	$.ajax({
-		url: 'https://api.instagram.com/oauth/authorize/?client_id=11bd5fad607241dc999e9c62d00f0f1b&redirect_uri=REDIRECT-URI&response_type=token';
-	})*/
+	});
 })
 
 // Default point of interests
 
 var initialPOI = [
-	{localLanguage: '雲南小鍋米線', title: 'Wannam Siu Wok Noodle', location: {lat: 22.370813, lng: 114.1357875}, ref: 0, display: true},
-	{localLanguage: '', title: 'Espuma', location: {lat: 22.299594, lng: 114.1723658}, ref: 1, display: true},
-	{localLanguage: '大勝軒 丸一', title: 'Taishoken Maruichi', location: {lat: 22.2865469, lng: 114.2164531}, ref: 2, display: true},
-	{localLanguage: '炑八韓烤', title: 'Meokbang Korean BBQ & Bar', location: {lat: 22.2799897, lng: 114.1820578}, ref: 3, display: true},
-	{localLanguage: '北京樓', title: 'Peking Garden Restaurant', location: {lat: 22.3577271, lng: 114.1264391}, ref: 4, display: true},
-	{localLanguage: '七輪燒肉', title: 'Yakiniku Shichirin', location: {lat: 22.2814449, lng: 114.1253643}, ref: 5, display: true},
-	{localLanguage: '', title: 'Beeger2', location: {lat: 22.2838502, lng: 114.1254129}, ref: 6, display: true},
-	{localLanguage: '', title: 'Solera Spanish Cuisine Concepts', location: {lat: 22.2967212, lng: 114.014821}, ref: 7, display: true}
+	{title: 'Wannam Siu Wok Noodle', location: {lat: 22.370813, lng: 114.1357875}, ref: 0, url: true},
+	{title: 'Tsim Sha Tsui Espuma', location: {lat: 22.299594, lng: 114.1723658}, ref: 1, url: true},
+	{title: 'Taishoken Maruichi', location: {lat: 22.2865469, lng: 114.2164531}, ref: 2, url: true},
+	{title: 'Meokbang Korean BBQ & Bar', location: {lat: 22.2799897, lng: 114.1820578}, ref: 3, url: true},
+	{title: 'Kwai Fong Peking Garden Restaurant', location: {lat: 22.3577271, lng: 114.1264391}, ref: 4, url: true},
+	{title: 'Yakiniku Shichirin', location: {lat: 22.2814449, lng: 114.1253643}, ref: 5, url: true},
+	{title: 'Beeger2', location: {lat: 22.2838502, lng: 114.1254129}, ref: 6, url: true},
+	{title: 'Solera Spanish Cuisine Concepts', location: {lat: 22.2967212, lng: 114.014821}, ref: 7, url: true}
 ]
 
 var map;
@@ -57,15 +53,105 @@ function initMap() {
 		bounds.extend(marker.position);
 		// Create click event for each infowindow
 		marker.addListener('click', function(){
-			markerClickedHandler(this, largeInfoWindow);
+			searchPOI(this);
 		});
-
 		map.fitBounds(bounds);
 	}
 }
 
+// This do a nearby search that will use title
+function searchPOI(marker) {
+	var bounds = map.getBounds();
+	var placesService = new google.maps.places.PlacesService(map);
+	placesService.textSearch({
+//		location: marker.position,
+		query: marker.title,
+		bounds: bounds
+	}, function(results, status){
+		if (status === google.maps.places.PlacesServiceStatus.OK){
+			console.log(results);
+			createMarkersForPlaces(results[0]);
+		}
+	})
+}
+
+function createMarkersForPlaces(places){
+	var bounds = new google.maps.LatLngBounds();
+	var place = places;
+	var icon = {
+		url: place.icon,
+		size: new google.maps.Size(35,35),
+		origin: new google.maps.Point(0,0),
+		anchor: new google.maps.Point(15, 34),
+		scaledSize: new google.maps.Size(25,25)
+	};
+	// Create a marker for each place.
+	var marker = new google.maps.Marker({
+		map: map,
+		icon: icon,
+		title: place.name,
+		position: place.geometry.location,
+		id: place.place_id
+	})
+		markers.push(marker);
+console.log(markers);
+	var placeInfoWindow = new google.maps.InfoWindow();
+	if (placeInfoWindow.marker == marker) {
+	} else {
+		getPlacesDetails(marker, placeInfoWindow);
+	}
+}
+
+// This is the place details search
+function getPlacesDetails(marker, infowindow) {
+	var service = new google.maps.places.PlacesService(map);
+	service.getDetails({
+		placeId: marker.id
+	}, function(place, status){
+		if (status === google.maps.places.PlacesServiceStatus.OK){
+			infowindow.marker = marker;
+			var infoWindowHTML = '<div>';
+			if (place.name) {
+				infoWindowHTML += '<strong>' + place.name + '</strong>';
+			}
+			if (place.photos) {
+				infoWindowHTML += '<br><br><img src="' + place.photos[0].getUrl(
+					{maxHeight: 100, maxWidth: 200}) + '">';
+			}
+			infoWindowHTML += '</div>';
+			infowindow.setContent(infoWindowHTML);
+			infowindow.open(map, marker);
+			infowindow.addListener('closeclick', function() {
+				infowindow.marker = null;
+			});
+		}
+	})
+}
+
+// AJAX for the infowindow using foursquare API
+
+function addingFoursquareAPI (marker){
+	var client_id= 'SQBOBMCCS1DFBV1OKHWLHZDOFEAM1IM3AJRFBJQVXZGW5FNP';
+	var client_secret= '2FXHOQ053U4F3ZIPMG442CVSFJD0ZJXZMG5J0KBLZQR3LFGH';
+	var requestURL = 'https://api.foursquare.com/v2/venues/explore?';
+	var d = new Date();
+	var todayYYYYMMDD = d.getFullYear() + (d.getMonth()+1) + d.getDay();
+
+/*	$.ajax({
+		dataType: 'jsonp',
+		url: foursquareURL,
+		data: {
+			ll:
+		},
+		success: function(data) {
+			console.log(data);
+		}
+	})*/
+};
+
 // This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position.
 function populateInfoWindow(marker, infowindow) {
+/*	addingFoursquareAPI(markerlo['-']);*/
 	if (infowindow.marker != marker) {
 		infowindow.setContent('');
 		infowindow.marker = marker;
@@ -108,12 +194,13 @@ function toggleBounce(marker) {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
 		setTimeout(function(){
 			marker.setAnimation(null);
-		}, 3000);
+		}, 1000);
 	}
 };
 
 // This function handle the click the marker click event
 function markerClickedHandler(marker, infoWindow){
+	console.log(marker);
 	populateInfoWindow(marker, infoWindow);
 	toggleBounce(marker);
 	map.setZoom(12);
@@ -150,6 +237,7 @@ function showMarkers(rawMarker) {
 
 var model = function() {
 	this.showClickedInfoWindow = function (marker){
+		console.log(marker);
 		var infoWindow = new google.maps.InfoWindow();
 		markerClickedHandler(marker, infoWindow)
 	}
@@ -186,9 +274,7 @@ var viewModel = function() {
 	});
 
 	self.updateMarkers = function(){
-		console.log("dklm");
 		new model().hideMarkers();
-		console.log(self.filterPOI());
 		new model().showMarkers(self.filterPOI());
 	}
 }
