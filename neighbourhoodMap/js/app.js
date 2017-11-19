@@ -75,7 +75,6 @@ function searchPOI(marker) {
 function createMarkersForPlaces(places){
 	var bounds = new google.maps.LatLngBounds();
 	var placeInfoWindow = new google.maps.InfoWindow();
-	console.log('init' + placeInfoWindow);
 	var place = places;
 	var icon = {
 		url: place.icon,
@@ -96,6 +95,7 @@ function createMarkersForPlaces(places){
 	console.log(placeInfoWindow.marker);
 	console.log(marker);
 	if (placeInfoWindow.marker != marker) {
+		console.log('test');
 		getPlacesDetails(marker, placeInfoWindow);
 	} else {
 		placeInfoWindow.open(map, marker);
@@ -150,9 +150,8 @@ function addingFoursquareAPI (marker){
 	})*/
 };
 
-// This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position.
+/* This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position.
 function populateInfoWindow(marker, infowindow) {
-/*	addingFoursquareAPI(markerlo['-']);*/
 	if (infowindow.marker != marker) {
 		infowindow.setContent('');
 		infowindow.marker = marker;
@@ -185,7 +184,7 @@ function populateInfoWindow(marker, infowindow) {
 		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		infowindow.open(map, marker);
 	}
-}
+}*/
 
 // This function sets the marker to bounce when it's clicked
 function toggleBounce(marker) {
@@ -201,7 +200,6 @@ function toggleBounce(marker) {
 
 // This function handle the click the marker click event
 function markerClickedHandler(marker){
-	console.log(marker);
 	searchPOI(marker);
 	toggleBounce(marker);
 	map.setZoom(12);
@@ -209,10 +207,8 @@ function markerClickedHandler(marker){
 }
 
 function hideMarkers() {
-	console.log("in hideMarkers")
 	for (var i = 0; i < markers.length; i++) {
 		markers[i].setMap(null);
-		console.log("in hide hide");
 	};
 }
 
@@ -230,6 +226,9 @@ function showMarkers(rawMarker) {
 			id: id
 		})
 		markers.push(marker);
+		marker.addListener('click', function(){
+			markerClickedHandler(this);
+		});
 //		marker.setMap(map);
 		bounds.extend(marker.position);
 	}
