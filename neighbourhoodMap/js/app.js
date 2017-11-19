@@ -91,15 +91,7 @@ function createMarkersForPlaces(places){
 		position: place.geometry.location,
 		id: place.place_id
 	})
-	//markers.push(marker);
-	console.log(placeInfoWindow.marker);
-	console.log(marker);
-	if (placeInfoWindow.marker != marker) {
-		console.log('test');
-		getPlacesDetails(marker, placeInfoWindow);
-	} else {
-		placeInfoWindow.open(map, marker);
-	}
+	getPlacesDetails(marker, placeInfoWindow);
 }
 
 // This is the place details search
@@ -119,7 +111,7 @@ function getPlacesDetails(marker, infowindow) {
 					{maxHeight: 150, maxWidth: 300}) + '">';
 			}
 			infoWindowHTML += '</div>';
-			console.log('here')
+//			console.log('here' + marker.getPosition().lat());
 			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);
 			infowindow.addListener('closeclick', function() {
@@ -136,55 +128,17 @@ function addingFoursquareAPI (marker){
 	var client_secret= '2FXHOQ053U4F3ZIPMG442CVSFJD0ZJXZMG5J0KBLZQR3LFGH';
 	var requestURL = 'https://api.foursquare.com/v2/venues/explore?';
 	var d = new Date();
-	var todayYYYYMMDD = d.getFullYear() + (d.getMonth()+1) + d.getDay();
+	var todayYYYYMMDD = d.getFullYear()+ '' + (d.getMonth()+1) + '' + d.getDate();
+	var place = marker.title;
 
-/*	$.ajax({
+	$.ajax({
 		dataType: 'jsonp',
-		url: foursquareURL,
-		data: {
-			ll:
-		},
+		url: requestURL + 'll=' + marker.getPosition().lat() + ',' + marker.getPosition().lng() + '&query=' + marker.title + '&client_id=' + client_id + '&client_secret=' + client_secret + '&v=' + todayYYYYMMDD,
 		success: function(data) {
-			console.log(data);
+			console.log('hello');
 		}
-	})*/
+	})
 };
-
-/* This populates the infowindow when the marker is clicked. Only one infowindow will open based on the marker position.
-function populateInfoWindow(marker, infowindow) {
-	if (infowindow.marker != marker) {
-		infowindow.setContent('');
-		infowindow.marker = marker;
-		// Clear the marker property when the infowindow is closed
-		infowindow.addListener('closeclick', function(){
-			infowindow.setMarker(null);
-		});
-		// Variable for streetview and pano setting
-		var streetViewService = new google.maps.StreetViewService();
-		var radius = 50;
-		function getStreetView(data, status) {
-			if (status == google.maps.StreetViewStatus.OK) {
-				var nearStreetViewLocation = data.location.latLng;
-				var heading = google.maps.geometry.spherical.computeHeading(
-					nearStreetViewLocation, marker.position);
-				infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-				var panoramaOptions = {
-					position: nearStreetViewLocation,
-					pov: {
-						heading: heading,
-						pitch: 30
-					}
-				};
-				var panorama = new google.maps.StreetViewPanorama(
-					document.getElementById('pano'), panoramaOptions);
-			} else {
-				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
-			}
-		}
-		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-		infowindow.open(map, marker);
-	}
-}*/
 
 // This function sets the marker to bounce when it's clicked
 function toggleBounce(marker) {
@@ -202,6 +156,7 @@ function toggleBounce(marker) {
 function markerClickedHandler(marker){
 	searchPOI(marker);
 	toggleBounce(marker);
+	addingFoursquareAPI(marker);
 	map.setZoom(12);
 	map.setCenter(marker.getPosition());
 }
