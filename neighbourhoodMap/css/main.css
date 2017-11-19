@@ -112,6 +112,10 @@ ul li{
 	transform: rotate(-45deg);
 }
 
+.infowindow-width {
+	max-width: 300px !important;
+}
+
 #map {
 	height: 100%;
 	bottom:0px;
