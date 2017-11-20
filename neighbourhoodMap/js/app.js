@@ -94,7 +94,7 @@ function createMarkersForPlaces(places){
 		title: place.name,
 		position: place.geometry.location,
 		id: place.place_id,
-	})
+	});
 	getPlacesDetails(marker, placeInfoWindow);
 }
 
@@ -150,6 +150,9 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 			infoWindowHTML += '</div>';
 			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);
+		},
+		error: function(){
+			alert('Review cannot be loaded!!!')
 		}
 	})
 };
@@ -168,18 +171,20 @@ function toggleBounce(marker) {
 
 // This function handle the click the marker click event
 function markerClickedHandler(marker){
-	searchPOI(marker);
 	toggleBounce(marker);
+	searchPOI(marker);
 	map.setZoom(12);
 	map.setCenter(marker.getPosition());
 }
 
+// This function hides all the markers
 function hideMarkers() {
 	for (var i = 0; i < markers.length; i++) {
 		markers[i].setMap(null);
 	};
 }
 
+// This function show the relevant the markers
 function showMarkers(rawMarker) {
 	var bounds = new google.maps.LatLngBounds();
 	for (var i = 0; i < rawMarker.length; i++) {
@@ -205,9 +210,7 @@ function showMarkers(rawMarker) {
 
 var model = function() {
 	this.showClickedInfoWindow = function (marker){
-		console.log(marker);
-		var infoWindow = new google.maps.InfoWindow();
-		markerClickedHandler(marker, infoWindow)
+		markerClickedHandler(marker);
 	}
 
 	this.hideMarkers = function(marker) {
