@@ -113,12 +113,10 @@ function getPlacesDetails(marker, infowindow) {
 				infoWindowHTML += '<strong>' + place.name + '</strong>';
 			}
 			if (place.photos) {
-				infoWindowHTML += '<br><img src="' + place.photos[0].getUrl(
-					{maxHeight: 150, maxWidth: 300}) + '"><br>';
+				infoWindowHTML += '<br><br><img src="' + place.photos[0].getUrl(
+					{maxHeight: 150, maxWidth: 300}) + '"><br><br>';
 			}
-			console.log(infoWindowHTML);
 			addingFoursquareAPI(marker, infoWindowHTML, infowindow)
-			console.log(infoWindowHTML)
 //			addingFoursquareAPI(marker, infoWindowHTML);
 //			infoWindowHTML += '</div>';
 /*			infowindow.setContent(infoWindowHTML);
@@ -146,8 +144,14 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 		dataType: 'jsonp',
 		url: foursquareURL,
 		success: function(data) {
-			tips = data.response.groups[0].items[0].tips[0].text;
-			infoWindowHTML += '<span class="infowindow-width"> Review: ' + tips + '</span>';
+			console.log(data.response.totalResults);
+			if (data.response.totalResults != 0) {
+				tips = data.response.groups[0].items[0].tips[0].text;
+			} else {
+				tips = 'Not available';
+			}
+			console.log('after if');
+			infoWindowHTML += '<span> Review: ' + tips + '</span>';
 			infoWindowHTML += '</div>';
 			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);
