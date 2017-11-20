@@ -38,7 +38,7 @@ function initMap() {
 		var position = initialPOI[i].location;
 		var title = initialPOI[i].title;
 		var district = initialPOI[i].district;
-		var id = initialPOI[i].ref;
+		var ref = initialPOI[i].ref;
 
 		var marker = new google.maps.Marker({
 			map: map,
@@ -46,7 +46,7 @@ function initMap() {
 			title: title,
 			district: district,
 			animation: google.maps.Animation.DROP,
-			id: id
+			ref: ref
 		})
 		//Push the marker to the markers array
 		markers.push(marker);
@@ -64,7 +64,6 @@ function initMap() {
 function searchPOI(marker) {
 	var bounds = map.getBounds();
 	var placesService = new google.maps.places.PlacesService(map);
-	console.log(marker.title + marker.district);
 	placesService.textSearch({
 		query: marker.title + marker.district,
 		bounds: bounds
@@ -111,16 +110,15 @@ function getPlacesDetails(marker, infowindow) {
 			var infoWindowHTML = '<div>';
 			if (place.name) {
 				infoWindowHTML += '<strong>' + place.name + '</strong>';
-			}
+			};
 			if (place.photos) {
 				infoWindowHTML += '<br><br><img src="' + place.photos[0].getUrl(
 					{maxHeight: 150, maxWidth: 300}) + '"><br><br>';
-			}
+			};
+			if (place.formatted_address) {
+				infoWindowHTML += '<br><strong>Address</strong>: ' + place.formatted_address + '<br><br>';
+			};
 			addingFoursquareAPI(marker, infoWindowHTML, infowindow)
-//			addingFoursquareAPI(marker, infoWindowHTML);
-//			infoWindowHTML += '</div>';
-/*			infowindow.setContent(infoWindowHTML);
-			infowindow.open(map, marker);*/
 			infowindow.addListener('closeclick', function() {
 				infowindow.marker = null;
 			});
@@ -129,7 +127,6 @@ function getPlacesDetails(marker, infowindow) {
 }
 
 // AJAX for the infowindow using foursquare API
-
 function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 	var client_id= 'SQBOBMCCS1DFBV1OKHWLHZDOFEAM1IM3AJRFBJQVXZGW5FNP';
 	var client_secret= '2FXHOQ053U4F3ZIPMG442CVSFJD0ZJXZMG5J0KBLZQR3LFGH';
@@ -144,14 +141,12 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 		dataType: 'jsonp',
 		url: foursquareURL,
 		success: function(data) {
-			console.log(data.response.totalResults);
 			if (data.response.totalResults != 0) {
 				tips = data.response.groups[0].items[0].tips[0].text;
 			} else {
 				tips = 'Not available';
 			}
-			console.log('after if');
-			infoWindowHTML += '<span> Review: ' + tips + '</span>';
+			infoWindowHTML += '<span><strong>Review</strong>: ' + tips + '</span>';
 			infoWindowHTML += '</div>';
 			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);
@@ -175,7 +170,6 @@ function toggleBounce(marker) {
 function markerClickedHandler(marker){
 	searchPOI(marker);
 	toggleBounce(marker);
-//	addingFoursquareAPI(marker);
 	map.setZoom(12);
 	map.setCenter(marker.getPosition());
 }
@@ -191,19 +185,20 @@ function showMarkers(rawMarker) {
 	for (var i = 0; i < rawMarker.length; i++) {
 		var position = rawMarker[i].location;
 		var title = rawMarker[i].title;
-		var id = rawMarker[i].ref;
+		var ref = rawMarker[i].ref;
+		var district = rawMarker[i].district;
 
 		var marker = new google.maps.Marker({
 			map: map,
 			position: position,
+			district: district,
 			title: title,
-			id: id
+			ref: ref
 		})
 		markers.push(marker);
 		marker.addListener('click', function(){
 			markerClickedHandler(this);
 		});
-//		marker.setMap(map);
 		bounds.extend(marker.position);
 	}
 }
