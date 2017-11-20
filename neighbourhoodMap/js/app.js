@@ -77,7 +77,9 @@ function searchPOI(marker) {
 
 function createMarkersForPlaces(places){
 	var bounds = new google.maps.LatLngBounds();
-	var placeInfoWindow = new google.maps.InfoWindow();
+	var placeInfoWindow = new google.maps.InfoWindow({
+		maxWidth:200
+	});
 	var place = places;
 	var icon = {
 		url: place.icon,
@@ -111,14 +113,14 @@ function getPlacesDetails(marker, infowindow) {
 				infoWindowHTML += '<strong>' + place.name + '</strong>';
 			}
 			if (place.photos) {
-				infoWindowHTML += '<br><br><img src="' + place.photos[0].getUrl(
+				infoWindowHTML += '<br><img src="' + place.photos[0].getUrl(
 					{maxHeight: 150, maxWidth: 300}) + '"><br>';
 			}
 			console.log(infoWindowHTML);
 			addingFoursquareAPI(marker, infoWindowHTML, infowindow)
 			console.log(infoWindowHTML)
 //			addingFoursquareAPI(marker, infoWindowHTML);
-			infoWindowHTML += '</div>';
+//			infoWindowHTML += '</div>';
 /*			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);*/
 			infowindow.addListener('closeclick', function() {
@@ -145,7 +147,7 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 		url: foursquareURL,
 		success: function(data) {
 			tips = data.response.groups[0].items[0].tips[0].text;
-			infoWindowHTML += '<span class = "infowindow-width"> Review: ' + tips + '</span>';
+			infoWindowHTML += '<span class="infowindow-width"> Review: ' + tips + '</span>';
 			infoWindowHTML += '</div>';
 			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);
