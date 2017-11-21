@@ -58,7 +58,11 @@ function initMap() {
 		});
 		map.fitBounds(bounds);
 	}
-}
+};
+
+function googleError() {
+	alert('Google Map is not loaded successfully!!!');
+};
 
 // This do a nearby search that will use title
 function searchPOI(marker) {
@@ -140,6 +144,7 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 	$.ajax({
 		dataType: 'jsonp',
 		url: foursquareURL,
+		timeout: 2500,
 		success: function(data) {
 			if (data.response.totalResults !== 0) {
 				tips = data.response.groups[0].items[0].tips[0].text;
@@ -151,8 +156,12 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 			infowindow.setContent(infoWindowHTML);
 			infowindow.open(map, marker);
 		},
-		error: function(){
-			alert('Review cannot be loaded!!!');
+		error: function(jqXHR, textStatus, errorThrown){
+			if (textStatus = 'timeout') {
+				infowindow.setContent(infoWindowHTML);
+				infowindow.open(map, marker);
+				alert('Review cannot be loaded!!!');
+			}
 		}
 	});
 }
