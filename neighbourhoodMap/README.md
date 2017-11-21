@@ -11,8 +11,12 @@ Credit to KnockoutJS, Google Map API and Foursquare API
 
 #### Contribution
 
-Any further good improvement please send an email to siuswong6@gmail.com
+Any further good improvement please send an email to siuswong6@gmail.com or submit an issue in the below repo
+
+https://github.com/sssamwong/Udacity-FSWD/tree/master/neighbourhoodMap
 
 ##### Issue
 
-Should be free of issues but do send an email to siuswong6@gmail.com if any
+Should be free of issues but do send an email to siuswong6@gmail.com  or submit an issue in the below repo
+
+https://github.com/sssamwong/Udacity-FSWD/tree/master/neighbourhoodMap
