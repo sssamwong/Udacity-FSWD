@@ -30,11 +30,11 @@ function initMap() {
 		zoom: 11
 	});
 
-//	var defaultIcon = makeMarkerIcon('0091ff');
 	var bounds = new google.maps.LatLngBounds();
 
 	//Looping through the array of POI to intialize the markers
 	for (var i = 0; i < initialPOI.length; i++) {
+		/* jshint loopfunc: true */
 		var position = initialPOI[i].location;
 		var title = initialPOI[i].title;
 		var district = initialPOI[i].district;
@@ -118,7 +118,7 @@ function getPlacesDetails(marker, infowindow) {
 			if (place.formatted_address) {
 				infoWindowHTML += '<br><strong>Address</strong>: ' + place.formatted_address + '<br><br>';
 			}
-			addingFoursquareAPI(marker, infoWindowHTML, infowindow)
+			addingFoursquareAPI(marker, infoWindowHTML, infowindow);
 			infowindow.addListener('closeclick', function() {
 				infowindow.marker = null;
 			});
@@ -159,7 +159,7 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 
 // This function sets the marker to bounce when it's clicked
 function toggleBounce(marker) {
-	if (marker.getAnimation() !== null) {
+	if (typeof marker.getAnimation() != 'undefined' && marker.getAnimation()) {
 		marker.setAnimation(null);
 	} else {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -188,6 +188,7 @@ function hideMarkers() {
 function showMarkers(rawMarker) {
 	var bounds = new google.maps.LatLngBounds();
 	for (var i = 0; i < rawMarker.length; i++) {
+		/* jshint loopfunc: true */
 		var position = rawMarker[i].location;
 		var title = rawMarker[i].title;
 		var ref = rawMarker[i].ref;
