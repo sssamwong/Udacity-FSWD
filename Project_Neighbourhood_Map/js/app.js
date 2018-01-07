@@ -58,11 +58,11 @@ function initMap() {
 		});
 		map.fitBounds(bounds);
 	}
-};
+}
 
 function googleError() {
 	alert('Google Map is not loaded successfully!!!');
-};
+}
 
 // This do a nearby search that will use title
 function searchPOI(marker) {
@@ -157,7 +157,7 @@ function addingFoursquareAPI (marker, infoWindowHTML, infowindow){
 			infowindow.open(map, marker);
 		},
 		error: function(jqXHR, textStatus, errorThrown){
-			if (textStatus = 'timeout') {
+			if (textStatus === 'timeout') {
 				infowindow.setContent(infoWindowHTML);
 				infowindow.open(map, marker);
 				alert('Review cannot be loaded!!!');
