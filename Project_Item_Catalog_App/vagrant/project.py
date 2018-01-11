@@ -1,11 +1,25 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Catalog, Investment, User
 app = Flask(__name__)
 
+# Connect to Database and create database session
+engine = create_engine('sqlite:///itemcatalog.db')
+Base.metadata.bind = engine
 
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
+
+# Show the catalog
 @app.route('/')
-@app.route('/hello')
-def HelloWorld():
-	return "Hello World"
+@app.route('/catalog')
+def showCatalog():
+	catalog = session.query(Catalog).order_by(asc(Catalog.name))
+#	if 'username' not in login_session:
+#		return render_template('publiccatalog.html', catalog=catalog)
+#	else:
+	return render_template('catalog.html', catalog=catalog)
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'

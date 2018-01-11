@@ -13,8 +13,8 @@ class User(Base):
     picture = Column(String(250))
     id = Column(Integer, primary_key = True)
 
-class InvestmentCategory(Base):
-    __tablename__ = 'investment_category'
+class Catalog(Base):
+    __tablename__ = 'catalog'
    
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
@@ -37,8 +37,8 @@ class Investment(Base):
     id = Column(Integer, primary_key = True)
     description = Column(String(250))
     price = Column(String(8))
-    investment_id = Column(Integer,ForeignKey('restaurant.id'))
-    investment = relationship(Restaurant)
+    investment_id = Column(Integer,ForeignKey('catalog.id'))
+    investment = relationship(Catalog)
     user_id = Column(Integer,ForeignKey('user.id'))
     user = relationship(User)
 
