@@ -16,6 +16,7 @@ session = DBSession()
 @app.route('/catalog')
 def showCatalog():
 	catalog = session.query(Catalog).order_by(asc(Catalog.name))
+#	items = session.query(Investment).filter_by(catalog_id=catalog_id).all()
 #	if 'username' not in login_session:
 #		return render_template('publiccatalog.html', catalog=catalog)
 #	else:
