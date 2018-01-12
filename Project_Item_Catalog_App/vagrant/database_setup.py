@@ -37,8 +37,8 @@ class Investment(Base):
     id = Column(Integer, primary_key = True)
     description = Column(String(250))
     price = Column(String(8))
-    investment_id = Column(Integer,ForeignKey('catalog.id'))
-    investment = relationship(Catalog)
+    catalog_id = Column(Integer,ForeignKey('catalog.id'))
+    catalog = relationship(Catalog)
     user_id = Column(Integer,ForeignKey('user.id'))
     user = relationship(User)
 
