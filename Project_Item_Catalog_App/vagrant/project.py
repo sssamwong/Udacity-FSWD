@@ -21,12 +21,23 @@ def showCatalog():
 #	else:
 	return render_template('catalog.html', catalog=catalog)
 
+# Show the investments
 @app.route('/catalog/<int:catalog_id>/')
 @app.route('/catalog/<int:catalog_id>/investment/')
 def showInvestment(catalog_id):
 	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
 	investments = session.query(Investment).filter_by(catalog_id=catalog_id).all()
 	return render_template('investment.html', investments=investments, catalog=catalog)
+
+# Edit the investments
+@app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/')
+def editInvestments(catalog_id, investment_id):
+	return "page to edit investments"
+
+# Edit the investments
+@app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/')
+def deleteInvestments(catalog_id, investment_id):
+	return "page to delete investments"
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'

@@ -1,13 +1,15 @@
 <html>
 	<body>
-		<h1>Investments</h1>
+		<h1>{{catalog.name}}</h1>
 
 		{% for investment in investments %}
-		<a href = "#">
 			<div class="row">
 				<div class="col-md-1"></div>
 					<div class="col-md-10 catalog-list">
 						<h3>{{investment.name}}</h3>
+						<a href = "{{url_for('editInvestments', catalog_id=catalog.id, investment_id=investment.id)}}">Edit</a>
+						<br>
+						<a href = "{{url_for('deleteInvestments', catalog_id=catalog.id, investment_id=investment.id)}}">Delete</a>
 					</div>
 				<div class="col-md-1"></div>
 			</div>
