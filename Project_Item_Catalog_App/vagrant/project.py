@@ -24,7 +24,7 @@ def showCatalog():
 # Show the investments
 @app.route('/catalog/<int:catalog_id>/')
 @app.route('/catalog/<int:catalog_id>/investment/')
-def showInvestment(catalog_id):
+def showInvestments(catalog_id):
 	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
 	investments = session.query(Investment).filter_by(catalog_id=catalog_id).all()
 	return render_template('investment.html', investments=investments, catalog=catalog)

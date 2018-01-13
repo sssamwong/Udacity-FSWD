@@ -3,11 +3,10 @@
 		<h1>Categories</h1>
 
 		{% for cata in catalog %}
-		<a href = "#">
 			<div class="row">
 				<div class="col-md-1"></div>
 					<div class="col-md-10 catalog-list">
-						<h3>{{cata.name}}</h3>
+						<a href = "{{url_for('showInvestments', catalog_id=cata.id)}}">{{cata.name}}</a>
 					</div>
 				<div class="col-md-1"></div>
 			</div>
