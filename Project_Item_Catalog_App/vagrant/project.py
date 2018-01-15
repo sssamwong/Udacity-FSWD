@@ -28,9 +28,16 @@ def showCatalog():
 @app.route('/catalog/<int:catalog_id>/')
 @app.route('/catalog/<int:catalog_id>/investment/')
 def showInvestments(catalog_id):
-	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+	catalog = session.query(Catalog).order_by(asc(Catalog.name))
+	thisCatalog = session.query(Catalog).filter_by(id=catalog_id).one()
 	investments = session.query(Investment).filter_by(catalog_id=catalog_id).all()
-	return render_template('investment.html', investments=investments, catalog=catalog)
+	return render_template('investment.html', investments=investments, catalog=catalog, thisCatalog=thisCatalog)
+
+@app.route('/catalog/<int:catalog_id>/<int:investment_id>/')
+def showInvestmentDetails(catalog_id, investment_id):
+	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+	investments = session.query(Investment).filter_by(id=investment_id).one()
+	return render_template('investmentDetails.html', investments=investments, catalog=catalog)
 
 # Edit the investments
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/')

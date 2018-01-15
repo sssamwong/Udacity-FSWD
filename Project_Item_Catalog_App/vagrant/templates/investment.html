@@ -1,20 +1,26 @@
+{% extends "main.html" %}
+{% block content %}
 <html>
 	<body>
-		<h1>{{catalog.name}}</h1>
-
-		{% for investment in investments %}
-			<div class="row">
-				<div class="col-md-1"></div>
-					<div class="col-md-10 catalog-list">
-						<h3>{{investment.name}}</h3>
-						<a href = "{{url_for('editInvestments', catalog_id=catalog.id, investment_id=investment.id)}}">Edit</a>
-						<br>
-						<a href = "{{url_for('deleteInvestments', catalog_id=catalog.id, investment_id=investment.id)}}">Delete</a>
-					</div>
-				<div class="col-md-1"></div>
+			<div class="container">
+				<section>
+					<h2>Categories</h2>
+						{% for cata in catalog %}
+						<div>
+							<a href = "{{url_for('showInvestments', catalog_id=cata.id)}}">{{cata.name}}</a>
+						</div>
+						{% endfor %}
+				</section>
+				<section>
+					<h2>Investments</h2>
+					{% for investment in investments %}
+						<div>
+							<a href = "{{url_for('showInvestmentDetails', catalog_id=thisCatalog.id, investment_id=investment.id)}}">{{investment.name}}</a>
+						</div>
+					{% endfor %}
+				</section>
 			</div>
-		</a>
-		{% endfor %}
 
 	</body>
 </html>
+{% endblock %}
