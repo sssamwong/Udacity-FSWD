@@ -36,8 +36,8 @@ def showInvestments(catalog_id):
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/')
 def showInvestmentDetails(catalog_id, investment_id):
 	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
-	investments = session.query(Investment).filter_by(id=investment_id).one()
-	return render_template('investmentDetails.html', investments=investments, catalog=catalog)
+	investment = session.query(Investment).filter_by(id=investment_id).one()
+	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
 
 # Edit the investments
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/')
