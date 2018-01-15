@@ -1,17 +1,27 @@
-<html>
+{% extends "main.html" %}
+{% block content %}
 	<body>
-		<h1>Categories</h1>
+		<h1>Catelog App</h1>
 
-		{% for cata in catalog %}
-			<div class="row">
-				<div class="col-md-1"></div>
-					<div class="col-md-10 catalog-list">
+		<div class="container">
+			<section>
+				<h2>Categories</h2>
+
+				{% for cata in catalog %}
+					<div>
 						<a href = "{{url_for('showInvestments', catalog_id=cata.id)}}">{{cata.name}}</a>
 					</div>
-				<div class="col-md-1"></div>
-			</div>
-		</a>
-		{% endfor %}
+				{% endfor %}
+			</section>
+			<section>
+				<h2>Latest Investments</h2>
+				{% for investment in investments %}
+					<div>
+						<a href = "#">{{investment.name}}</a>
+					</div>
+				{% endfor %}
+			</section>
+		</div>
 
 	</body>
-</html>
+{% endblock %}

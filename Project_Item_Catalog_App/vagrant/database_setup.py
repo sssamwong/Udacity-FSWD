@@ -1,8 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
- 
+import datetime
+
 Base = declarative_base()
 
 class User(Base):
@@ -41,7 +42,7 @@ class Investment(Base):
     catalog = relationship(Catalog)
     user_id = Column(Integer,ForeignKey('user.id'))
     user = relationship(User)
-
+    createDate = Column(DateTime, default=datetime.datetime.utcnow)
 
     @property
     def serialize(self):
