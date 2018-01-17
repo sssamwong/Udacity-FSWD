@@ -15,7 +15,7 @@
 				<h2>Latest Investments</h2>
 				{% for investment in investments %}
 					<div>
-						<a href = "#">{{investment.name}}</a>
+						<a href = "{{url_for('showInvestmentDetails', catalog_id=investment.catalog_id, investment_id=investment.id)}}">{{investment.name}}</a>
 					</div>
 				{% endfor %}
 			</section>
