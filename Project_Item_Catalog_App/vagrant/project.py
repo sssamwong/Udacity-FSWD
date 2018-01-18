@@ -40,13 +40,21 @@ def showInvestmentDetails(catalog_id, investment_id):
 	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
 
 # Edit the investments
-@app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/')
-def editInvestments(catalog_id, investment_id):
-	return "page to edit investments"
+@app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/', methods = ['GET', 'POST'])
+def editInvestment(catalog_id, investment_id):
+	editedInvestment = session.query(Investment).filter_by(id = investment_id).one()
+	if request.method == 'POST':
+		if request.form['name']:
+			editedInvestment.name = request.form['name']
+		session.add(editedInvestment)
+		session.commit()
+		return redirect(url_for('showInvestments', catalog_id = catalog_id))
+	else:
+		return render_template('editInvestment.html', catalog_id=catalog_id, investment_id=investment_id, i = editedInvestment)
 
 # Edit the investments
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/')
-def deleteInvestments(catalog_id, investment_id):
+def deleteInvestment(catalog_id, investment_id):
 	return "page to delete investments"
 
 if __name__ == '__main__':

@@ -5,9 +5,9 @@
 			<div class="container">
 				<h2>{{investment.name}}</h2>
 				<div>{{investment.description}}</div>
-				<a href = "{{url_for('editInvestments', catalog_id=catalog.id, investment_id=investment.id)}}">Edit</a>
+				<a href = "{{url_for('editInvestment', catalog_id=catalog.id, investment_id=investment.id)}}">Edit</a>
 				<a> | </a>
-				<a href = "{{url_for('deleteInvestments', catalog_id=catalog.id, investment_id=investment.id)}}">Delete</a>
+				<a href = "{{url_for('deleteInvestment', catalog_id=catalog.id, investment_id=investment.id)}}">Delete</a>
 			</div>
 
 	</body>

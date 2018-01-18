@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% block content %}
+	<body>
+		<h3>Edit Investment</h3>
+		<form action="{{ url_for('editInvestment', catalog_id = catalog_id, investment_id=i.id)}}" method = 'post'>
+			<p>Name: </p>
+			<input type = "text" size = "30" name = "name" placeholder = "{{i.name}}">
+			<input type = "submit" value = "Edit">
+			<a href = "{{url_for('showInvestments', catalog_id = i.catalog_id)}}">Cancel</a>
+		</form>
+	</body>
+{% endblock %}
