@@ -39,6 +39,17 @@ def showInvestmentDetails(catalog_id, investment_id):
 	investment = session.query(Investment).filter_by(id=investment_id).one()
 	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
 
+# Create new investment
+@app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
+def newInvestment(catalog_id):
+	if request.method == 'POST':
+		newInvestment = Investment(name=request.form['name'], catalog_id=catalog_id)
+		session.add(newInvestment)
+		session.commit()
+		return redirect(url_for('showInvestments', catalog_id=catalog_id))
+	else:
+		return render_template('newInvestment.html', catalog_id=catalog_id)
+
 # Edit the investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/', methods = ['GET', 'POST'])
 def editInvestment(catalog_id, investment_id):
