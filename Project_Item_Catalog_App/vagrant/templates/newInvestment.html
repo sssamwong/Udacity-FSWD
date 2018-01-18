@@ -5,6 +5,8 @@
 		<form action="{{url_for('newInvestment', catalog_id=catalog_id )}}" method = 'POST'>
 			<p>Name:</p>
 			<input type='text' size='30' name='name'>
+			<p>Description:</p>
+			<input type='text' size='30' name='description'>
 			<input type='submit' value='Create'>
 			<a href = "{{url_for('showInvestments', catalog_id = catalog_id)}}">Cancel</a>
 		</form>

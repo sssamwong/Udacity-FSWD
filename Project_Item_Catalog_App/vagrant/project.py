@@ -43,7 +43,7 @@ def showInvestmentDetails(catalog_id, investment_id):
 @app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
 def newInvestment(catalog_id):
 	if request.method == 'POST':
-		newInvestment = Investment(name=request.form['name'], catalog_id=catalog_id)
+		newInvestment = Investment(name=request.form['name'], description=request.form['description'], catalog_id=catalog_id)
 		session.add(newInvestment)
 		session.commit()
 		return redirect(url_for('showInvestments', catalog_id=catalog_id))

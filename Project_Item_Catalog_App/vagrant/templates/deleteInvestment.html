@@ -2,7 +2,7 @@
 {% block content %}
 	<body>
 		<h3>Delete Investment</h3>
-		<h4>Are you sure you want to delete {{i.name}}</h4>
+		<h4>Are you sure you want to delete {{i.name}} ?</h4>
 		<form action="{{ url_for('deleteInvestment', catalog_id=i.catalog_id, investment_id=i.id)}}" method = 'post'>
 			<input type='submit', value = 'Delete'>
 			<a href = "{{ url_for('showInvestments', catalog_id = i.catalog_id)}}"> Cancel </a>
