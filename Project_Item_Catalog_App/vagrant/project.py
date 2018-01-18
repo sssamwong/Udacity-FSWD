@@ -39,7 +39,7 @@ def showInvestmentDetails(catalog_id, investment_id):
 	investment = session.query(Investment).filter_by(id=investment_id).one()
 	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
 
-# Edit the investments
+# Edit the investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/', methods = ['GET', 'POST'])
 def editInvestment(catalog_id, investment_id):
 	editedInvestment = session.query(Investment).filter_by(id = investment_id).one()
@@ -52,10 +52,16 @@ def editInvestment(catalog_id, investment_id):
 	else:
 		return render_template('editInvestment.html', catalog_id=catalog_id, investment_id=investment_id, i = editedInvestment)
 
-# Edit the investments
-@app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/')
+# Edit the investment
+@app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/', methods= ['GET', 'POST'])
 def deleteInvestment(catalog_id, investment_id):
-	return "page to delete investments"
+	investmentToDelete = session.query(Investment).filter_by(id = investment_id).one()
+	if request.method == 'POST':
+		session.delete(investmentToDelete)
+		session.commit()
+		return redirect(url_for('showInvestments', catalog_id = catalog_id))
+	else:
+		return render_template('deleteInvestment.html', i = investmentToDelete)
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'
