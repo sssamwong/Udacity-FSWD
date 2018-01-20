@@ -33,17 +33,29 @@ def showInvestments(catalog_id):
 	investments = session.query(Investment).filter_by(catalog_id=catalog_id).all()
 	return render_template('investment.html', investments=investments, catalog=catalog, thisCatalog=thisCatalog)
 
+# Show the investment details
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/')
 def showInvestmentDetails(catalog_id, investment_id):
 	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
 	investment = session.query(Investment).filter_by(id=investment_id).one()
 	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
 
+# Create new catalog
+@app.route('/catalog/new', methods=['GET', 'POST'])
+def newCatalog():
+	if request.method == 'POST':
+		newCatalog = Catalog(user_id=1, name = request.form['name'])
+		session.add(newCatalog)
+		session.commit()
+		return redirect(url_for('showCatalog'))
+	else:
+		return render_template('newCatalog.html')
+
 # Create new investment
 @app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
 def newInvestment(catalog_id):
 	if request.method == 'POST':
-		newInvestment = Investment(name=request.form['name'], description=request.form['description'], catalog_id=catalog_id)
+		newInvestment = Investment(name=request.form['name'], description=request.form['description'], price=request.form['price'], catalog_id=catalog_id)
 		session.add(newInvestment)
 		session.commit()
 		return redirect(url_for('showInvestments', catalog_id=catalog_id))
@@ -58,6 +70,7 @@ def editInvestment(catalog_id, investment_id):
 	if request.method == 'POST':
 		editedInvestment.name = request.form['name']
 		editedInvestment.description = request.form['description']
+		editedInvestment.price = request.form['price']
 		editedInvestment.catalog_id = request.form['catalog_id']
 		session.add(editedInvestment)
 		session.commit()
