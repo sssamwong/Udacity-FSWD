@@ -53,15 +53,17 @@ def newInvestment(catalog_id):
 # Edit the investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/', methods = ['GET', 'POST'])
 def editInvestment(catalog_id, investment_id):
+	catalog = session.query(Catalog).order_by(asc(Catalog.name))
 	editedInvestment = session.query(Investment).filter_by(id = investment_id).one()
 	if request.method == 'POST':
-		if request.form['name']:
-			editedInvestment.name = request.form['name']
+		editedInvestment.name = request.form['name']
+		editedInvestment.description = request.form['description']
+		editedInvestment.catalog_id = request.form['catalog_id']
 		session.add(editedInvestment)
 		session.commit()
 		return redirect(url_for('showInvestments', catalog_id = catalog_id))
 	else:
-		return render_template('editInvestment.html', catalog_id=catalog_id, investment_id=investment_id, i = editedInvestment)
+		return render_template('editInvestment.html', catalog_id=catalog_id, investment_id=investment_id, catalog=catalog, i = editedInvestment)
 
 # Edit the investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/', methods= ['GET', 'POST'])

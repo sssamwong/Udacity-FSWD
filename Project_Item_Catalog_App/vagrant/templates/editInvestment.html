@@ -2,9 +2,21 @@
 {% block content %}
 	<body>
 		<h3>Edit Investment</h3>
-		<form action="{{ url_for('editInvestment', catalog_id = catalog_id, investment_id=i.id)}}" method = 'post'>
-			<p>Name: </p>
-			<input type = "text" size = "30" name = "name" placeholder = "{{i.name}}">
+		<form action="{{ url_for('editInvestment', catalog_id = catalog_id, investment_id=i.id)}}" method = 'POST'>
+			<p>Name</p>
+			<input type = "text" size = "30" name = "name" value = "{{i.name}}"><br><br>
+			<p>Description</p>
+			<textarea type="text" cols="35" rows="5" name="description">{{i.description}}</textarea><br><br>
+			<p>Category</p>
+			<select name="catalog_id">
+				{% for cata in catalog %}
+					{% if (cata.id == i.catalog_id) %}
+						<option selected value="{{cata.id}}">{{cata.name}}</option>
+					{% else %}
+						<option value="{{cata.id}}">{{cata.name}}</option>
+					{% endif %}
+				{% endfor %}
+			</select><br><br>
 			<input type = "submit" value = "Edit">
 			<a href = "{{url_for('showInvestments', catalog_id = i.catalog_id)}}">Cancel</a>
 		</form>

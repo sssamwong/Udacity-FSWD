@@ -4,9 +4,9 @@
 		<h1> New Investment </h1>
 		<form action="{{url_for('newInvestment', catalog_id=catalog_id )}}" method = 'POST'>
 			<p>Name:</p>
-			<input type='text' size='30' name='name'>
+			<input type='text' size='30' name='name'><br><br>
 			<p>Description:</p>
-			<input type='text' size='30' name='description'>
+			<textarea type='text' cols='35' rows='5' name='description'></textarea><br><br>
 			<input type='submit' value='Create'>
 			<a href = "{{url_for('showInvestments', catalog_id = catalog_id)}}">Cancel</a>
 		</form>

@@ -11,17 +11,15 @@
 						{% endfor %}
 				</section>
 				<section>
+					<p>
+						<a href="{{url_for('newInvestment', catalog_id=thisCatalog.id)}}">Add New Investment</a>
+					</p>
 					<h2>Investments</h2>
 					{% for investment in investments %}
 						<div>
 							<a href = "{{url_for('showInvestmentDetails', catalog_id=thisCatalog.id, investment_id=investment.id)}}">{{investment.name}}</a>
 						</div>
 					{% endfor %}
-				</section>
-				<section>
-					<h3>
-						<a href="{{url_for('newInvestment', catalog_id=thisCatalog.id)}}">New Investment</a>
-					</h3>
 				</section>
 			</div>
 
