@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, jsonify, url_for, f
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, Investment, User
+from flask import session as login_session
+import random, string
+
 app = Flask(__name__)
 
 # Connect to Database and create database session
@@ -14,6 +17,8 @@ session = DBSession()
 # Show login
 @app.route('/catalog/login')
 def showLogin():
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+	login_session['state'] = state
 	return render_template('login.html')
 
 # Show logout
