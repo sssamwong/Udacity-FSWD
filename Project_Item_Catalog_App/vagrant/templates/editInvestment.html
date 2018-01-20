@@ -1,5 +1,6 @@
 {% extends "main.html" %}
 {% block content %}
+{% include "header.html" %}
 	<body>
 		<h3>Edit Investment</h3>
 		<form action="{{ url_for('editInvestment', catalog_id = catalog_id, investment_id=i.id)}}" method = 'POST'>

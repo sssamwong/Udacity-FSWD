@@ -11,6 +11,16 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# Show login
+@app.route('/catalog/login')
+def showLogin():
+	return render_template('login.html')
+
+# Show logout
+@app.route('/catalog/logout')
+def showLogout():
+	return render_template('logout.html')
+
 # Show the catalog
 @app.route('/')
 @app.route('/catalog')

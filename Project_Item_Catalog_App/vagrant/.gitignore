@@ -1,5 +1,3 @@
 __pycache__
 *.pyc
 .vagrant
-templates/header.html
-templates/main.html
