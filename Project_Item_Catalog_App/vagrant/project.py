@@ -37,11 +37,13 @@ def gconnect():
 		response.headers['Content-Type'] = 'application/json'
 		return response
 	code = request.data
+	print "code is %s" % code
 	try:
 		# Pass the authorization code to credentials object
 		oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
 		oauth_flow.redirect_uri = 'postmessage'
 		credentials = oauth_flow.step2_exchange(code)
+		print "credentials is %s" % credentials
 	except FlowExchangeError:
 		response = make_response(json.dumps('Failed to upgrade the authorization code.'), 401)
 		response.headers['Content-Type'] = 'application/json'
@@ -58,6 +60,7 @@ def gconnect():
 		return response
 	# Authenticate the access token
 	gplus_id = credentials.id_token['sub']
+	print "gplus_id is %s" % gplus_id
 	if result['user_id'] != gplus_id:
 		response = make_response(json.dumps("Token cannot be authenticated"), 401)
 		response.headers['Content-Type'] = 'application/json'
@@ -78,13 +81,17 @@ def gconnect():
 
 	# Store the access token in the session
 	login_session['access_token'] = credentials.access_token
+	print "login_session['access_token'] is %s" % login_session['access_token']
 	login_session['gplus_id'] = gplus_id
 
 	# Get user info
 	userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
 	params = {'access_token': credentials.access_token, 'alt': 'json'}
 	answer = requests.get(userinfo_url, params=params)
+	print "answer is %s" % answer
 	data = answer.json()
+
+	print ("data['name'] is %s" % data['name'])
 
 	login_session['username'] = data['name']
 	login_session['picture'] = data['picture']
@@ -105,15 +112,12 @@ def gconnect():
 
 # Disconnect the current user
 @app.route('/gdisconnect')
-def gdisconnet():
+def gdisconnect():
 	access_token = login_session.get('access_token')
-	print login_session
 	if access_token is None:
-		print access_token
 		response = make_response(json.dumps('Current user not connected.'), 401)
 		response.headers['Content-Type'] = 'application/json'
 		return response
-	print access_token
 	url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
 	h = httplib2.Http()
 	result = h.request(url, 'GET')[0]
