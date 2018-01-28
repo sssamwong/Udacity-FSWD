@@ -91,6 +91,8 @@ def gconnect():
 	print "answer is %s" % answer
 	data = answer.json()
 
+	print "Data is %s" % data
+
 	print ("data['name'] is %s" % data['name'])
 
 	login_session['username'] = data['name']
@@ -100,7 +102,7 @@ def gconnect():
 	print ('user name: ' + login_session['username'])
 
 	output = ''
-	output += '<h1>Welcome, '
+	output += '<h1>Welcome '
 	output += login_session['username']
 	output += '!</h1>'
 	output += '<img src="'
@@ -122,7 +124,7 @@ def gdisconnect():
 	h = httplib2.Http()
 	result = h.request(url, 'GET')[0]
 
-	if result['status'] == '200':
+	if result['status'] == '200' or result['status'] == '400':
 		# End the current user's session
 		del login_session['access_token']
 		del login_session['gplus_id']
@@ -131,7 +133,7 @@ def gdisconnect():
 		del login_session['picture']
 		response = make_response(json.dumps('Successfullu disconnected.'), 200)
 		response.headers['Content-Type'] = 'application/json'
-		return response
+		return redirect(url_for('showCatalog'))
 	else:
 		response = make_response(json.dumps('Failed to revoke token for current user.'), 400)
 		response.headers['Content-Type'] = 'application/json'
