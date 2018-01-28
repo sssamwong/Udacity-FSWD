@@ -2,8 +2,8 @@
 {% block content %}
 {% include "header.html" %}
 	<body>
-		<h3>Logout</h3>
-		<h4>Please click the below button to logout from the catalog.</h4>
+		<h3>Logout</h3><br>
+		<h4>Please click the below button to logout from the catalog.</h4><br>
 		<form action="{{url_for('gdisconnect')}}">
 			<input type='submit', value = 'Logout'>
 			<a href = "{{ url_for('showCatalog')}}"> Cancel </a>
