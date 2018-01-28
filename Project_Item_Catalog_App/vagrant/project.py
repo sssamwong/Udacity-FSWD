@@ -227,8 +227,12 @@ def editInvestment(catalog_id, investment_id):
 @app.route('/catalog/<int:catalog_id>/delete/', methods= ['GET', 'POST'])
 def deleteCatalog(catalog_id):
 	catalogToDelete = session.query(Catalog).filter_by(id = catalog_id).one()
+	investmentToDelete = session.query(Investment).filter_by(catalog_id = catalog_id).all()
 	if request.method == 'POST':
+		for i in investmentToDelete:
+			session.delete(i)
 		session.delete(catalogToDelete)
+		flash('%s Successfully Deleted' % catalogToDelete.name)
 		session.commit()
 		return redirect(url_for('showCatalog'))
 	else:
