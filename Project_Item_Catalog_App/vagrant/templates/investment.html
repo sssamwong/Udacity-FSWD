@@ -21,9 +21,11 @@
 				</section>
 				<section>
 					<br>
-					<a href="{{url_for('newInvestment', catalog_id=thisCatalog.id)}}">Add New Investment</a>
+					<a href="{{url_for('newInvestment', catalog_id=thisCatalog.id)}}">Add a New Investment</a>
 					<br><br>
-					<a href="{{url_for('editCatalog', catalog_id=thisCatalog.id)}}">Edit Catalog</a>
+					<a href="{{url_for('editCatalog', catalog_id=thisCatalog.id)}}">Edit a Catalog</a>
+					<br><br>
+					<a href="{{url_for('deleteCatalog', catalog_id=thisCatalog.id)}}">Delete a Catalog</a>
 				</section>
 			</div>
 

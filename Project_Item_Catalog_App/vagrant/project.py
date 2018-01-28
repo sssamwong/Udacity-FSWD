@@ -173,7 +173,7 @@ def showInvestmentDetails(catalog_id, investment_id):
 	investment = session.query(Investment).filter_by(id=investment_id).one()
 	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
 
-# Create new catalog
+# Create a new catalog
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def newCatalog():
 	if request.method == 'POST':
@@ -184,7 +184,7 @@ def newCatalog():
 	else:
 		return render_template('newCatalog.html')
 
-# Create new investment
+# Create a new investment
 @app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
 def newInvestment(catalog_id):
 	if request.method == 'POST':
@@ -195,7 +195,7 @@ def newInvestment(catalog_id):
 	else:
 		return render_template('newInvestment.html', catalog_id=catalog_id)
 
-# Edit the catalog
+# Edit a catalog
 @app.route('/catalog/<int:catalog_id>/edit/', methods = ['GET', 'POST'])
 def editCatalog(catalog_id):
 	editedCatalog = session.query(Catalog).filter_by(id = catalog_id).one()
@@ -203,11 +203,11 @@ def editCatalog(catalog_id):
 		editedCatalog.name = request.form['name']
 		session.add(editedCatalog)
 		session.commit()
-		return redirect(url_for('showCatalog', catalog_id = catalog_id))
+		return redirect(url_for('showCatalog'))
 	else:
 		return render_template('editCatalog.html', catalog_id=catalog_id, i = editedCatalog)
 
-# Edit the investment
+# Edit an investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/', methods = ['GET', 'POST'])
 def editInvestment(catalog_id, investment_id):
 	catalog = session.query(Catalog).order_by(asc(Catalog.name))
@@ -223,7 +223,18 @@ def editInvestment(catalog_id, investment_id):
 	else:
 		return render_template('editInvestment.html', catalog_id=catalog_id, investment_id=investment_id, catalog=catalog, i = editedInvestment)
 
-# Edit the investment
+# Delete a catalog
+@app.route('/catalog/<int:catalog_id>/delete/', methods= ['GET', 'POST'])
+def deleteCatalog(catalog_id):
+	catalogToDelete = session.query(Catalog).filter_by(id = catalog_id).one()
+	if request.method == 'POST':
+		session.delete(catalogToDelete)
+		session.commit()
+		return redirect(url_for('showCatalog'))
+	else:
+		return render_template('deleteCatalog.html', catalog_id=catalog_id, i = catalogToDelete)
+
+# Delete an investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/', methods= ['GET', 'POST'])
 def deleteInvestment(catalog_id, investment_id):
 	investmentToDelete = session.query(Investment).filter_by(id = investment_id).one()
