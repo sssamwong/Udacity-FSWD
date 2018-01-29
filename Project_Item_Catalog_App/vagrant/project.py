@@ -156,12 +156,10 @@ def showLogout():
 def showCatalog():
 	catalog = session.query(Catalog).order_by(asc(Catalog.name))
 	investments = session.query(Investment).order_by(Investment.createDate.desc())
-	for investment in investments:
-		print investment.createDate
-#	if 'username' not in login_session:
-#		return render_template('publiccatalog.html', catalog=catalog)
-#	else:
-	return render_template('catalog.html', catalog=catalog, investments=investments)
+	if 'username' not in login_session:
+		return render_template('publiccatalog.html', catalog=catalog, investments=investments)
+	else:
+		return render_template('catalog.html', catalog=catalog, investments=investments)
 
 # Show the investments
 @app.route('/catalog/<int:catalog_id>/')
