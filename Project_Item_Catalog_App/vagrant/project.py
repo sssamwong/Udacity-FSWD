@@ -176,6 +176,8 @@ def showInvestmentDetails(catalog_id, investment_id):
 # Create a new catalog
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def newCatalog():
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		newCatalog = Catalog(user_id=1, name = request.form['name'])
 		session.add(newCatalog)
@@ -187,6 +189,8 @@ def newCatalog():
 # Create a new investment
 @app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
 def newInvestment(catalog_id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		newInvestment = Investment(name=request.form['name'], description=request.form['description'], price=request.form['price'], catalog_id=catalog_id)
 		session.add(newInvestment)
@@ -199,6 +203,8 @@ def newInvestment(catalog_id):
 @app.route('/catalog/<int:catalog_id>/edit/', methods = ['GET', 'POST'])
 def editCatalog(catalog_id):
 	editedCatalog = session.query(Catalog).filter_by(id = catalog_id).one()
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		editedCatalog.name = request.form['name']
 		session.add(editedCatalog)
@@ -212,6 +218,8 @@ def editCatalog(catalog_id):
 def editInvestment(catalog_id, investment_id):
 	catalog = session.query(Catalog).order_by(asc(Catalog.name))
 	editedInvestment = session.query(Investment).filter_by(id = investment_id).one()
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		editedInvestment.name = request.form['name']
 		editedInvestment.description = request.form['description']
@@ -228,6 +236,8 @@ def editInvestment(catalog_id, investment_id):
 def deleteCatalog(catalog_id):
 	catalogToDelete = session.query(Catalog).filter_by(id = catalog_id).one()
 	investmentToDelete = session.query(Investment).filter_by(catalog_id = catalog_id).all()
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		for i in investmentToDelete:
 			session.delete(i)
@@ -242,6 +252,8 @@ def deleteCatalog(catalog_id):
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/', methods= ['GET', 'POST'])
 def deleteInvestment(catalog_id, investment_id):
 	investmentToDelete = session.query(Investment).filter_by(id = investment_id).one()
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		session.delete(investmentToDelete)
 		session.commit()
