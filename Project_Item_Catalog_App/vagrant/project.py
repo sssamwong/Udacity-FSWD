@@ -178,8 +178,12 @@ def showInvestments(catalog_id):
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/')
 def showInvestmentDetails(catalog_id, investment_id):
 	catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+	creator = getUserInfo(catalog.user_id)
 	investment = session.query(Investment).filter_by(id=investment_id).one()
-	return render_template('investmentDetails.html', investment=investment, catalog=catalog)
+	if 'username' not in login_session or creator.id != login_session['user_id']:
+		return render_template('publicInvestmentDetails.html', investment=investment, catalog=catalog, creator=creator)
+	else:
+		return render_template('investmentDetails.html', investment=investment, catalog=catalog, creator=creator)
 
 # Create a new catalog
 @app.route('/catalog/new', methods=['GET', 'POST'])
