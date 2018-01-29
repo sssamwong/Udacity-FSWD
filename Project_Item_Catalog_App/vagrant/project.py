@@ -179,7 +179,7 @@ def newCatalog():
 	if 'username' not in login_session:
 		return redirect('/login')
 	if request.method == 'POST':
-		newCatalog = Catalog(user_id=1, name = request.form['name'])
+		newCatalog = Catalog(name = request.form['name'], user_id = login_session['user_id'])
 		session.add(newCatalog)
 		session.commit()
 		return redirect(url_for('showCatalog'))
@@ -192,7 +192,7 @@ def newInvestment(catalog_id):
 	if 'username' not in login_session:
 		return redirect('/login')
 	if request.method == 'POST':
-		newInvestment = Investment(name=request.form['name'], description=request.form['description'], price=request.form['price'], catalog_id=catalog_id)
+		newInvestment = Investment(name=request.form['name'], description=request.form['description'], price=request.form['price'], catalog_id=catalog_id, user_id = login_session['user_id'])
 		session.add(newInvestment)
 		session.commit()
 		return redirect(url_for('showInvestments', catalog_id=catalog_id))
@@ -260,6 +260,27 @@ def deleteInvestment(catalog_id, investment_id):
 		return redirect(url_for('showInvestments', catalog_id = catalog_id))
 	else:
 		return render_template('deleteInvestment.html', i = investmentToDelete)
+
+# Get user ID
+def getUserID(email):
+	try:
+		user = session.query(User).filter_by(email = email).one()
+		return user.id
+	except:
+		return None
+
+# Get user information
+def getUserInfo(user_id):
+	user = session.query(User).filter_by(id = user_id).one()
+	return user
+
+# Create a new sser
+def createUser(login_session):
+	newUser = User(name = login_session['username'], email = login_session['email'], picture = login_session['picture'])
+	session.add(newUser)
+	session.commit()
+	user = session.query(User).filter_by(email = login_session['email']).one()
+	return user.id
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'
