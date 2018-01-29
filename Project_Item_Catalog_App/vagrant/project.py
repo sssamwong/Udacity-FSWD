@@ -167,8 +167,12 @@ def showCatalog():
 def showInvestments(catalog_id):
 	catalog = session.query(Catalog).order_by(asc(Catalog.name))
 	thisCatalog = session.query(Catalog).filter_by(id=catalog_id).one()
+	creator = getUserInfo(thisCatalog.user_id)
 	investments = session.query(Investment).filter_by(catalog_id=catalog_id).all()
-	return render_template('investment.html', investments=investments, catalog=catalog, thisCatalog=thisCatalog)
+	if 'username' not in login_session or creator.id != login_session['user_id']:
+		return render_template('publicinvestment.html', investments=investments, catalog=catalog, thisCatalog=thisCatalog, creator=creator)
+	else:
+		return render_template('investment.html', investments=investments, catalog=catalog, thisCatalog=thisCatalog, creator=creator)
 
 # Show the investment details
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/')
