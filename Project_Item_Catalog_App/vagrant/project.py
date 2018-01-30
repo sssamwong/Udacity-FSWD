@@ -283,6 +283,20 @@ def deleteInvestment(catalog_id, investment_id):
 	else:
 		return render_template('deleteInvestment.html', i = investmentToDelete)
 
+# JSON endpoint for the entire catalog
+@app.route('/json/catalog', methods = ['GET'])
+def catalogJsonEndpoint():
+	if request.method == 'GET':
+		catalog = session.query(Catalog).all()
+		return jsonify(catalog = [i.serialize for i in catalog])
+
+# JSON endpoint for investments
+@app.route('/json/catalog/<int:id>', methods = ['GET'])
+def investmentsJsonEndpoint(id):
+	if request.method == 'GET':
+		investments = session.query(Investment).filter_by(catalog_id = id).all()
+		return jsonify(investments = [i.serialize for i in investments])
+
 # Get user ID
 def getUserID(email):
 	try:
