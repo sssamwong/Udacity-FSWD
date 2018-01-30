@@ -191,7 +191,7 @@ def newCatalog():
 	if 'username' not in login_session:
 		return redirect('/login')
 	if request.method == 'POST':
-		newCatalog = Catalog(name = request.form['name'], user_id = login_session['user_id'])
+		newCatalog = Catalog(user_id = login_session['user_id'], name = request.form['name'])
 		session.add(newCatalog)
 		session.commit()
 		return redirect(url_for('showCatalog'))
@@ -246,10 +246,14 @@ def editInvestment(catalog_id, investment_id):
 # Delete a catalog
 @app.route('/catalog/<int:catalog_id>/delete/', methods= ['GET', 'POST'])
 def deleteCatalog(catalog_id):
-	catalogToDelete = session.query(Catalog).filter_by(id = catalog_id).one()
+	catalogToDelete = session.query(Catalog).filter_by(id=catalog_id).one()
 	investmentToDelete = session.query(Investment).filter_by(catalog_id = catalog_id).all()
+	print login_session['user_id']
+	print catalogToDelete.user_id
 	if 'username' not in login_session:
 		return redirect('/login')
+	if catalogToDelete.user_id != login_session['user_id']:
+		return alertUnauthAmendment()
 	if request.method == 'POST':
 		for i in investmentToDelete:
 			session.delete(i)
@@ -266,6 +270,8 @@ def deleteInvestment(catalog_id, investment_id):
 	investmentToDelete = session.query(Investment).filter_by(id = investment_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	if investmentToDelete.user_id != login_session['user_id']:
+		return alertUnauthAmendment()
 	if request.method == 'POST':
 		session.delete(investmentToDelete)
 		session.commit()
@@ -293,6 +299,11 @@ def createUser(login_session):
 	session.commit()
 	user = session.query(User).filter_by(email = login_session['email']).one()
 	return user.id
+
+# Alert for unauthorized amendment
+def alertUnauthAmendment():
+	print 'in the method'
+	return "<script>function myFunction() {alert('You are not authorized to modify this.');}</script><body onload='myFunction()''>" 
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'
