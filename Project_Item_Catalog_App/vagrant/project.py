@@ -217,6 +217,8 @@ def editCatalog(catalog_id):
 	editedCatalog = session.query(Catalog).filter_by(id = catalog_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	if editedCatalog.user_id != login_session['user_id']:
+		return alertUnauthAmendment()
 	if request.method == 'POST':
 		editedCatalog.name = request.form['name']
 		session.add(editedCatalog)
@@ -232,6 +234,8 @@ def editInvestment(catalog_id, investment_id):
 	editedInvestment = session.query(Investment).filter_by(id = investment_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	if editedInvestment.user_id != login_session['user_id']:
+		return alertUnauthAmendment()
 	if request.method == 'POST':
 		editedInvestment.name = request.form['name']
 		editedInvestment.description = request.form['description']
