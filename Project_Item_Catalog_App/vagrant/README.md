@@ -26,15 +26,15 @@ The code should be run from the terminal and command line following the below st
   *  cd /vagrant
   *  Run the project.py by entering - 'python project.py'
   *  Open Chrome or other browers
-  *  Go to 'http://localhost:8000/'
+  *  Go to http://localhost:8000/
   *  Start to explore
 
 #### JSON API Endpoint
 
 API could be access through below:
 
-  *  'http://localhost:8000/json/catalog'
-  *  'http://localhost:8000/json/catalog/<id of the category>''
+  *  http://localhost:8000/json/catalog
+  *  http://localhost:8000/json/catalog/<id of the category>
 
 #### Contribution
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, make_response
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, make_response # noqa
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, Investment, User
@@ -13,7 +13,7 @@ import requests
 
 app = Flask(__name__)
 
-CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
+CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id'] # noqa
 
 # Connect to Database and create database session
 engine = create_engine('sqlite:///itemcatalog.db')
@@ -22,12 +22,14 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
 # Show login
 @app.route('/login')
 def showLogin():
 	state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
 	login_session['state'] = state
 	return render_template('login.html', STATE=state)
+
 
 # Connect to google server for authentication & authorization
 @app.route('/gconnect', methods=['POST'])
@@ -118,6 +120,7 @@ def gconnect():
 	print "Done!!!!"
 	return output
 
+
 # Disconnect the current user
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -145,10 +148,12 @@ def gdisconnect():
 		response.headers['Content-Type'] = 'application/json'
 		return response
 
+
 # Show logout
 @app.route('/logout')
 def showLogout():
 	return render_template('logout.html')
+
 
 # Show the catalog
 @app.route('/')
@@ -160,6 +165,7 @@ def showCatalog():
 		return render_template('publiccatalog.html', catalog=catalog, investments=investments)
 	else:
 		return render_template('catalog.html', catalog=catalog, investments=investments)
+
 
 # Show the investments
 @app.route('/catalog/<int:catalog_id>/')
@@ -174,6 +180,7 @@ def showInvestments(catalog_id):
 	else:
 		return render_template('investment.html', investments=investments, catalog=catalog, thisCatalog=thisCatalog, creator=creator)
 
+
 # Show the investment details
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/')
 def showInvestmentDetails(catalog_id, investment_id):
@@ -184,6 +191,7 @@ def showInvestmentDetails(catalog_id, investment_id):
 		return render_template('publicInvestmentDetails.html', investment=investment, catalog=catalog, creator=creator)
 	else:
 		return render_template('investmentDetails.html', investment=investment, catalog=catalog, creator=creator)
+
 
 # Create a new catalog
 @app.route('/catalog/new', methods=['GET', 'POST'])
@@ -198,6 +206,7 @@ def newCatalog():
 	else:
 		return render_template('newCatalog.html')
 
+
 # Create a new investment
 @app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
 def newInvestment(catalog_id):
@@ -210,6 +219,7 @@ def newInvestment(catalog_id):
 		return redirect(url_for('showInvestments', catalog_id=catalog_id))
 	else:
 		return render_template('newInvestment.html', catalog_id=catalog_id)
+
 
 # Edit a catalog
 @app.route('/catalog/<int:catalog_id>/edit/', methods = ['GET', 'POST'])
@@ -226,6 +236,7 @@ def editCatalog(catalog_id):
 		return redirect(url_for('showCatalog'))
 	else:
 		return render_template('editCatalog.html', catalog_id=catalog_id, i = editedCatalog)
+
 
 # Edit an investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/edit/', methods = ['GET', 'POST'])
@@ -246,6 +257,7 @@ def editInvestment(catalog_id, investment_id):
 		return redirect(url_for('showInvestments', catalog_id = catalog_id))
 	else:
 		return render_template('editInvestment.html', catalog_id=catalog_id, investment_id=investment_id, catalog=catalog, i = editedInvestment)
+
 
 # Delete a catalog
 @app.route('/catalog/<int:catalog_id>/delete/', methods= ['GET', 'POST'])
@@ -268,6 +280,7 @@ def deleteCatalog(catalog_id):
 	else:
 		return render_template('deleteCatalog.html', catalog_id=catalog_id, i = catalogToDelete)
 
+
 # Delete an investment
 @app.route('/catalog/<int:catalog_id>/<int:investment_id>/delete/', methods= ['GET', 'POST'])
 def deleteInvestment(catalog_id, investment_id):
@@ -283,6 +296,7 @@ def deleteInvestment(catalog_id, investment_id):
 	else:
 		return render_template('deleteInvestment.html', i = investmentToDelete)
 
+
 # JSON endpoint for the entire catalog
 @app.route('/json/catalog', methods = ['GET'])
 def catalogJsonEndpoint():
@@ -290,12 +304,14 @@ def catalogJsonEndpoint():
 		catalog = session.query(Catalog).all()
 		return jsonify(catalog = [i.serialize for i in catalog])
 
+
 # JSON endpoint for investments
 @app.route('/json/catalog/<int:id>', methods = ['GET'])
 def investmentsJsonEndpoint(id):
 	if request.method == 'GET':
 		investments = session.query(Investment).filter_by(catalog_id = id).all()
 		return jsonify(investments = [i.serialize for i in investments])
+
 
 # Get user ID
 def getUserID(email):
@@ -305,10 +321,12 @@ def getUserID(email):
 	except:
 		return None
 
+
 # Get user information
 def getUserInfo(user_id):
 	user = session.query(User).filter_by(id = user_id).one()
 	return user
+
 
 # Create a new sser
 def createUser(login_session):
@@ -318,10 +336,12 @@ def createUser(login_session):
 	user = session.query(User).filter_by(email = login_session['email']).one()
 	return user.id
 
+
 # Alert for unauthorized amendment
 def alertUnauthAmendment():
 	print 'in the method'
 	return "<script>function myFunction() {alert('You are not authorized to modify this.');}</script><body onload='myFunction()''>" 
+
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'
